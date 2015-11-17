@@ -4,17 +4,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
 {
-    class TagCloud : ICloudImageGenerator
+    interface ICloudImageGenerator
     {
-
-        private Bitmap image;
-        public Bitmap GetBitmap()
-        {
-            return image;
-        }
+        Bitmap GetBitmap();
     }
 }

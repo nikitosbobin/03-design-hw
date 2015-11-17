@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace TagCloudGenerator.Classes
 {
-    interface IAlgorithm
+    public enum Vector
     {
-
+        Up, Right, Down, Left, Random
     }
 }
