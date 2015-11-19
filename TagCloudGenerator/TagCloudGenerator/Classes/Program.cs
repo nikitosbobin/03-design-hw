@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TagCloudGenerator.Classes;
-using TagCloudGenerator.Interfaces;
+﻿using TagCloudGenerator.Interfaces;
 
-namespace TagCloudGenerator
+namespace TagCloudGenerator.Classes
 {
     class Program
     {
@@ -14,7 +8,9 @@ namespace TagCloudGenerator
         {
             ITextDecoder inputText = new TxtDecoder(args[0]);
             ITextParser parsedText = new SimpleTextParser(inputText);
-            var readyText = parsedText.GetWords();
+            var tagCloud = new TagCloud(parsedText, 1000, 1000);
+            IImageEncoder encoder = new PngEncoder(tagCloud);
+            encoder.SaveImage("out");
         }
     }
 }

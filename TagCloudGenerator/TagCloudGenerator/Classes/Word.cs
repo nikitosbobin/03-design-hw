@@ -1,35 +1,29 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace TagCloudGenerator.Classes
 {
     class Word
     {
-        public Word(string source, int frequency = 0)
+        public Word(string source, int frequency = 1)
         {
             Source = source.ToLower();
-            Color = Color.Black;
+            Color = new SolidBrush(System.Drawing.Color.Black);
             Frequency = frequency;
-            Random rnd = new Random(DateTime.Now.Millisecond);
-            Way = (Vector) rnd.Next(0, 4);
-        }
-
-        public Word(string source, Color color, int frequency, Vector way)
-        {
-            Source = source.ToLower();
-            Color = color;
-            Frequency = frequency;
-            Way = way;
+            FontFamily = "Times New Roman";
+            FontSize = 30;
         }
 
         public string Source { get; set; }
-        public Color Color { get; set; }
+        public SolidBrush Color { get; set; }
         public int Frequency { get; set; }
-        public Vector Way { get; set; }
+        public Font Font {
+            get
+            {
+                return new Font(FontFamily, FontSize);
+            }
+            private set { }
+        }
+        public string FontFamily { get; set; }
+        public float FontSize { get; set; }
     }
 }

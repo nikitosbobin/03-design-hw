@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
@@ -23,6 +20,14 @@ namespace TagCloudGenerator.Classes
 
         public HashSet<string> BoringWords { get; set; }
         private Dictionary<string, Word> innerWords;
+        public Word[] Words {
+            get
+            {
+                MakeText();
+                return innerWords.Select(pair => pair.Value).ToArray();
+            }
+            private set { }
+        }
         private string[] decodedLines;
 
         private void MakeText()
@@ -35,7 +40,7 @@ namespace TagCloudGenerator.Classes
                     if (innerWords.ContainsKey(word))
                         innerWords[word].Frequency++;
                     else
-                        innerWords.Add(word, new Word(word,1));
+                        innerWords.Add(word, new Word(word));
                 }
                 else
                     if (!BoringWords.Contains(word))
@@ -43,10 +48,9 @@ namespace TagCloudGenerator.Classes
             }
         }
 
-        public Word[] GetWords()
+        public HashSet<string> GetBoringWords()
         {
-            MakeText();
-            return innerWords.Select(pair => pair.Value).ToArray();
+            return BoringWords;
         }
     }
 }
