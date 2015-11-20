@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace TagCloudGenerator.Classes
 {
@@ -10,7 +11,7 @@ namespace TagCloudGenerator.Classes
             Color = new SolidBrush(System.Drawing.Color.Black);
             Frequency = frequency;
             FontFamily = "Times New Roman";
-            FontSize = 30;
+            FontSize = 12;
         }
 
         public string Source { get; set; }
@@ -21,7 +22,6 @@ namespace TagCloudGenerator.Classes
             {
                 return new Font(FontFamily, FontSize);
             }
-            private set { }
         }
         public string FontFamily { get; set; }
         public float FontSize { get; set; }
