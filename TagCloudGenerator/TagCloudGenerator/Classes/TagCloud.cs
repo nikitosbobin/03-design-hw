@@ -9,20 +9,26 @@ namespace TagCloudGenerator.Classes
 {
     class TagCloud : ICloudImageGenerator
     {
-        public TagCloud(ITextParser parsedText, int height, int width, params Color[] wordsColors)
+        public TagCloud(ITextParser parsedText, int height, int width, List<SolidBrush> wordsColors = null)
         {
             this.parsedText = parsedText;
             image = new Bitmap(height, width);
+            rnd = new Random(DateTime.Now.Millisecond);
             frames = new HashSet<Rectangle>();
             graph = Graphics.FromImage(image);
             graph.Clear(Color.CadetBlue);
-            if (wordsColors.Length != 0)
+            this.wordsColors = new List<SolidBrush>();
+            if (wordsColors != null)
                 this.wordsColors = wordsColors;
+            else
+                this.wordsColors.Add(new SolidBrush(Color.Black));
         }
 
         public void DrawNextWord(Word word)
         {
             Font font = new Font("Times New Roman", currentFontSize);
+
+            SolidBrush color = wordsColors[rnd.Next(0, wordsColors.Count)];
             int wordWidth = (int) (font.Size*0.65)*word.Source.Length;
             int wordHeight = font.Height;
             Point pos;
@@ -33,7 +39,9 @@ namespace TagCloudGenerator.Classes
                 thisWord = new Rectangle(pos, new Size(wordWidth, wordHeight));
                 currentAngle += delta;
             } while (InterdsectsWithAny(thisWord));
-            graph.DrawString(word.Source, font, word.Color,
+            var t = wordsColors[0];
+
+            graph.DrawString(word.Source, font, color,
                 (image.Width / 2 + pos.X), (image.Height / 2 - pos.Y));
             frames.Add(thisWord);
             //graph.DrawRectangle(new Pen(Brushes.Black), (image.Width / 2 + pos.X), (image.Height / 2 - pos.Y),wordWidth,wordHeight);
@@ -49,11 +57,12 @@ namespace TagCloudGenerator.Classes
             return false;
         }
 
+        private Random rnd;
         public static float MIN_FONT_SIZE = 12;
         private float currentFontSize;
         private HashSet<Rectangle> frames; 
         private ITextParser parsedText;
-        private Color[] wordsColors;
+        private List<SolidBrush> wordsColors;
         private Bitmap image;
         public Bitmap Image {
             get
@@ -70,7 +79,7 @@ namespace TagCloudGenerator.Classes
         private Point Func()
         {
             var x = (int)(5*currentAngle * Math.Cos(currentAngle));
-            var y = (int)(5*currentAngle * Math.Sin(currentAngle));
+            var y = (int)(3*currentAngle * Math.Sin(currentAngle));
             //image.SetPixel((image.Width / 2 + x), (image.Height / 2 - y), Color.Black);
             return new Point(x, y);
         }
