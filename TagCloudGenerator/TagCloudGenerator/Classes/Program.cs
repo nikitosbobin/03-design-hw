@@ -22,7 +22,7 @@ namespace TagCloudGenerator.Classes
             colors.Add(new SolidBrush(Color.LawnGreen));
             ITextDecoder inputText = new TxtDecoder(args[0]);
             ITextParser parsedText = new SimpleTextParser(inputText);
-            var tagCloud = new TagCloud(parsedText, 1000, 1000, colors);
+            var tagCloud = new PolarFunctionCloud(parsedText, int.Parse(args[1]), int.Parse(args[2]), colors);
             IImageEncoder encoder = new PngEncoder(tagCloud);
             encoder.SaveImage("out");
         }

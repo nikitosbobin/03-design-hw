@@ -7,9 +7,9 @@ using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
 {
-    class TagCloud : ICloudImageGenerator
+    class PolarFunctionCloud : ICloudImageGenerator
     {
-        public TagCloud(ITextParser parsedText, int height, int width, List<SolidBrush> wordsColors = null)
+        public PolarFunctionCloud(ITextParser parsedText, int height, int width, List<SolidBrush> wordsColors = null)
         {
             this.parsedText = parsedText;
             image = new Bitmap(height, width);
@@ -26,44 +26,38 @@ namespace TagCloudGenerator.Classes
 
         public void DrawNextWord(Word word)
         {
-            Font font = new Font("Times New Roman", currentFontSize);
-
-            SolidBrush color = wordsColors[rnd.Next(0, wordsColors.Count)];
-            int wordWidth = (int) (font.Size*0.65)*word.Source.Length;
-            int wordHeight = font.Height;
+            var font = new Font("Times New Roman", currentFontSize);
+            var color = wordsColors[rnd.Next(0, wordsColors.Count)];
+            var wordWidth = (int) (font.Size*0.65)*word.Source.Length;
+            var wordHeight = font.Height;
             Point pos;
             Rectangle thisWord;
             do
             {
-                pos = Func();
+                pos = Func(currentAngle, new Size(image.Width, image.Height));
+                //image.SetPixel((image.Width / 2 + pos.X), (image.Height / 2 - pos.Y), Color.Black);
                 thisWord = new Rectangle(pos, new Size(wordWidth, wordHeight));
                 currentAngle += delta;
             } while (InterdsectsWithAny(thisWord));
-            var t = wordsColors[0];
-
             graph.DrawString(word.Source, font, color,
                 (image.Width / 2 + pos.X), (image.Height / 2 - pos.Y));
             frames.Add(thisWord);
-            //graph.DrawRectangle(new Pen(Brushes.Black), (image.Width / 2 + pos.X), (image.Height / 2 - pos.Y),wordWidth,wordHeight);
+            //graph.DrawRectangle(new Pen(Brushes.Black), (image.Width / 2 + pos.X), (image.Height / 2 - pos.Y),
+                //wordWidth, wordHeight);
         }
 
         private bool InterdsectsWithAny(Rectangle rect)
         {
-            foreach (var r in frames)
-            {
-                if (r.IntersectsWith(rect))
-                    return true;
-            }
-            return false;
+            return frames.Any(rect.IntersectsWith);
         }
 
-        private Random rnd;
+        private readonly Random rnd;
         public static float MIN_FONT_SIZE = 12;
         private float currentFontSize;
         private HashSet<Rectangle> frames; 
-        private ITextParser parsedText;
-        private List<SolidBrush> wordsColors;
-        private Bitmap image;
+        private readonly ITextParser parsedText;
+        private readonly List<SolidBrush> wordsColors;
+        private readonly Bitmap image;
         public Bitmap Image {
             get
             {
@@ -72,16 +66,36 @@ namespace TagCloudGenerator.Classes
             }
             private set { }
         }
-        private Graphics graph;
+        private readonly Graphics graph;
         private float currentAngle;
-        private float delta = (float)Math.PI/100;
+        private const float delta = (float) Math.PI/100;
 
-        private Point Func()
+        public Func<float, Size, Point> Func = MainFunc;
+
+        /// <summary>
+        /// Задаёт функцию в полярных координатах
+        /// </summary>
+        /// <param name="angle">Угол</param>
+        /// <param name="image">Размер изображения</param>
+        /// <returns></returns>
+        private static Point MainFunc(float angle, Size image)
         {
-            var x = (int)(5*currentAngle * Math.Cos(currentAngle));
-            var y = (int)(3*currentAngle * Math.Sin(currentAngle));
-            //image.SetPixel((image.Width / 2 + x), (image.Height / 2 - y), Color.Black);
+            var nod = GetGreatestCommonDivisor(image.Height, image.Width);
+            var x = (int)(image.Width / nod * angle * Math.Cos(angle));
+            var y = (int)(image.Height / nod * angle * Math.Sin(angle));
             return new Point(x, y);
+        }
+
+        private static int GetGreatestCommonDivisor(int firstItem, int secondItem)
+        {
+            while (firstItem != secondItem)
+            {
+                if (firstItem > secondItem)
+                    firstItem -= secondItem;
+                else
+                    secondItem -= firstItem;
+            }
+            return firstItem;
         }
 
         private void Update()
