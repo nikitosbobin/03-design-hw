@@ -3,9 +3,9 @@ using TagCloudGenerator.Classes;
 
 namespace TagCloudGenerator.Interfaces
 {
-    interface ITextParser
+    interface ITextHandler
     {
         HashSet<string> BoringWords { get; set; }
-        Word[] Words { get; }
+        IEnumerable<Word> GetWords(ITextDecoder decoder);
     }
 }

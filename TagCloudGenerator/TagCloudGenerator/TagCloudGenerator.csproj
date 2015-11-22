@@ -54,7 +54,7 @@
     <Compile Include="Classes\PolarFunctionCloud.cs" />
     <Compile Include="Interfaces\IImageEncoder.cs" />
     <Compile Include="Interfaces\ITextDecoder.cs" />
-    <Compile Include="Interfaces\ITextParser.cs" />
+    <Compile Include="Interfaces\ITextHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

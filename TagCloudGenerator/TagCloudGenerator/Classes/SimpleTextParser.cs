@@ -4,38 +4,42 @@ using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
 {
-    class SimpleTextParser : ITextParser
+    class SimpleTextHandler : ITextHandler
     {
-        public SimpleTextParser(ITextDecoder decoder, params string[] boringWords)
+        public SimpleTextHandler(params string[] boringWords)
         {
-            decodedLines = decoder.GetDecodedText();
             BoringWords = new HashSet<string>();
             if (boringWords != null && boringWords.Length != 0)
-                foreach (var boringW in boringWords)
+                foreach (var boringWord in boringWords)
                 {
-                    if (!BoringWords.Contains(boringW.ToLower()))
-                        BoringWords.Add(boringW.ToLower());
+                    if (!BoringWords.Contains(boringWord.ToLower()))
+                        BoringWords.Add(boringWord.ToLower());
                 }
         }
 
-        public HashSet<string> BoringWords { get; set; }
         private Dictionary<string, Word> innerWords;
-        public Word[] Words {
-            get
-            {
-                MakeText();
-                return innerWords.Select(pair => pair.Value).ToArray();
-            }
-            private set { }
-        }
         private string[] decodedLines;
+        public HashSet<string> BoringWords { get; set; }
+        private Word[] words;
+
+        public IEnumerable<Word> GetWords(ITextDecoder decoder)
+        {
+            decodedLines = decoder.GetDecodedText();
+            MakeText();
+            return words;
+        }
+
+        private bool IsItRightWord(string word)
+        {
+            return word.Length > 5 && !BoringWords.Contains(word);
+        }
 
         private void MakeText()
         {
             innerWords = new Dictionary<string, Word>();
             foreach (var word in decodedLines)
             {
-                if (word.Length > 5 && !BoringWords.Contains(word))
+                if (IsItRightWord(word))
                 {
                     if (innerWords.ContainsKey(word))
                         innerWords[word].Frequency++;
@@ -46,6 +50,7 @@ namespace TagCloudGenerator.Classes
                     if (!BoringWords.Contains(word))
                         BoringWords.Add(word);
             }
+            words = innerWords.Select(pair => pair.Value).ToArray();
         }
 
         public HashSet<string> GetBoringWords()

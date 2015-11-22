@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
@@ -10,21 +9,26 @@ namespace TagCloudGenerator.Classes
     {
         static void Main(string[] args)
         {
-            List<SolidBrush> colors = new List<SolidBrush>();
-            colors.Add(new SolidBrush(Color.AliceBlue));
-            colors.Add(new SolidBrush(Color.Black));
-            colors.Add(new SolidBrush(Color.Aqua));
-            colors.Add(new SolidBrush(Color.DarkRed));
-            colors.Add(new SolidBrush(Color.DarkGreen));
-            colors.Add(new SolidBrush(Color.Crimson));
-            colors.Add(new SolidBrush(Color.Goldenrod));
-            colors.Add(new SolidBrush(Color.BlueViolet));
-            colors.Add(new SolidBrush(Color.LawnGreen));
+            List<SolidBrush> solidBrushes = new List<SolidBrush>();
+            solidBrushes.Add(new SolidBrush(Color.AliceBlue));
+            solidBrushes.Add(new SolidBrush(Color.Black));
+            solidBrushes.Add(new SolidBrush(Color.Aqua));
+            solidBrushes.Add(new SolidBrush(Color.DarkRed));
+            solidBrushes.Add(new SolidBrush(Color.DarkGreen));
+            solidBrushes.Add(new SolidBrush(Color.Crimson));
+            solidBrushes.Add(new SolidBrush(Color.Goldenrod));
+            solidBrushes.Add(new SolidBrush(Color.BlueViolet));
+            solidBrushes.Add(new SolidBrush(Color.LawnGreen));
             ITextDecoder inputText = new TxtDecoder(args[0]);
-            ITextParser parsedText = new SimpleTextParser(inputText);
-            var tagCloud = new PolarFunctionCloud(parsedText, int.Parse(args[1]), int.Parse(args[2]), colors);
-            IImageEncoder encoder = new PngEncoder(tagCloud);
-            encoder.SaveImage("out");
+            ITextHandler parsedText = new SimpleTextHandler();
+            IImageEncoder encoder = new PngEncoder();
+            ICloudImageGenerator tagCloud = new PolarFunctionCloud(int.Parse(args[1]), int.Parse(args[2]), solidBrushes);
+            tagCloud.CreateImage(inputText, parsedText, encoder);
+            if (tagCloud.SaveImage("out"))
+                Console.WriteLine("Запись прошла успешно");
+            else
+                Console.WriteLine("Запись не удалась");
+            Console.ReadKey();
         }
     }
 }

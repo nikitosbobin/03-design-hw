@@ -8,7 +8,7 @@ namespace TagCloudGenerator.Classes
     {
         public TxtDecoder(string path)
         {
-            this.Path = path;
+           Path = path;
         }
 
         public string Path { get; set; }
