@@ -6,10 +6,17 @@ namespace TagCloudGenerator.Classes
 {
     class PngEncoder : IImageEncoder
     {
-        
-        public void SaveImage(String name, ICloudImageGenerator cloud)
+        public bool SaveImage(String name, ICloudImageGenerator cloud)
         {
-            cloud.Image.Save(name + ".png", ImageFormat.Png);
+            try
+            {
+                cloud.Image.Save(name + ".png", ImageFormat.Png);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

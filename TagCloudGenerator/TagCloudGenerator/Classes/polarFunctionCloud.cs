@@ -8,18 +8,18 @@ namespace TagCloudGenerator.Classes
 {
     class PolarFunctionCloud : ICloudImageGenerator
     {
-        public PolarFunctionCloud(int height, int width, List<SolidBrush> wordsColors = null)
+        public PolarFunctionCloud(int height, int width, List<SolidBrush> wordsBrushes = null)
         {
             Image = new Bitmap(height, width);
             rnd = new Random(DateTime.Now.Millisecond);
             frames = new HashSet<Rectangle>();
             graph = Graphics.FromImage(Image);
             graph.Clear(Color.CadetBlue);
-            wordsBrushes = new List<SolidBrush>();
-            if (wordsColors != null)
-                wordsBrushes = wordsColors;
+            this.wordsBrushes = new List<SolidBrush>();
+            if (wordsBrushes != null)
+                this.wordsBrushes = wordsBrushes;
             else
-                wordsBrushes.Add(new SolidBrush(Color.Black));
+                this.wordsBrushes.Add(new SolidBrush(Color.Black));
         }
 
         public void DrawNextWord(Word word)
@@ -57,7 +57,6 @@ namespace TagCloudGenerator.Classes
         private readonly Random rnd;
         private float currentFontSize;
         private HashSet<Rectangle> frames;
-        private IImageEncoder encoder;
         private readonly List<SolidBrush> wordsBrushes;
         public Bitmap Image { get; private set; }
         private readonly Graphics graph;
@@ -92,10 +91,9 @@ namespace TagCloudGenerator.Classes
             return firstItem;
         }
 
-        public void CreateImage(ITextDecoder decoder, ITextHandler parsedText, IImageEncoder imageEncoder)
+        public void CreateImage(ITextDecoder decoder, ITextHandler parsedText)
         {
             var words = parsedText.GetWords(decoder).OrderByDescending(u => u.Frequency).ToArray();
-            encoder = imageEncoder;
             currentFontSize = Image.Height * 0.04f; //облако меняется
             int currentFreq = words[0].Frequency;
             foreach (var word in words)
@@ -108,16 +106,6 @@ namespace TagCloudGenerator.Classes
                 DrawNextWord(word);
                 //currentAngle = 0; //облако меняется
             }
-        }
-
-        public bool SaveImage(string path)
-        {
-            if (Image != null)
-            {
-                encoder.SaveImage(path, this);
-                return true;
-            }
-            return false;
         }
     }
 }

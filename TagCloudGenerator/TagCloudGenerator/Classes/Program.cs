@@ -21,10 +21,10 @@ namespace TagCloudGenerator.Classes
             solidBrushes.Add(new SolidBrush(Color.LawnGreen));
             ITextDecoder inputText = new TxtDecoder(args[0]);
             ITextHandler parsedText = new SimpleTextHandler();
-            IImageEncoder encoder = new PngEncoder();
             ICloudImageGenerator tagCloud = new PolarFunctionCloud(int.Parse(args[1]), int.Parse(args[2]), solidBrushes);
-            tagCloud.CreateImage(inputText, parsedText, encoder);
-            if (tagCloud.SaveImage("out"))
+            tagCloud.CreateImage(inputText, parsedText);
+            IImageEncoder encoder = new PngEncoder();
+            if (encoder.SaveImage("out", tagCloud))
                 Console.WriteLine("Запись прошла успешно");
             else
                 Console.WriteLine("Запись не удалась");
