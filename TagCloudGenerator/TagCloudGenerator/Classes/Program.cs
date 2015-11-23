@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Ninject;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
@@ -19,12 +20,16 @@ namespace TagCloudGenerator.Classes
             solidBrushes.Add(new SolidBrush(Color.Goldenrod));
             solidBrushes.Add(new SolidBrush(Color.BlueViolet));
             solidBrushes.Add(new SolidBrush(Color.LawnGreen));
-            ITextDecoder inputText = new TxtDecoder(args[0]);
-            ITextHandler parsedText = new SimpleTextHandler();
-            ICloudImageGenerator tagCloud = new PolarFunctionCloud(int.Parse(args[1]), int.Parse(args[2]), solidBrushes);
-            tagCloud.CreateImage(inputText, parsedText);
-            IImageEncoder encoder = new PngEncoder();
-            if (encoder.SaveImage("out", tagCloud))
+            var kernel = new StandardKernel();
+            kernel.Bind<ITextDecoder>().To<TxtDecoder>().WithConstructorArgument(args[0]);
+            kernel.Bind<ITextHandler>().To<SimpleTextHandler>();
+            kernel.Bind<ICloudImageGenerator>()
+                .To<PolarFunctionCloud>()
+                .WithConstructorArgument("width", int.Parse(args[1]))
+                .WithConstructorArgument("height", int.Parse(args[2]))
+                .WithConstructorArgument("wordsBrushes", solidBrushes);
+            kernel.Bind<IImageEncoder>().To<PngEncoder>();
+            if (kernel.Get<IImageEncoder>().SaveImage("out"))
                 Console.WriteLine("Запись прошла успешно");
             else
                 Console.WriteLine("Запись не удалась");

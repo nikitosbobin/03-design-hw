@@ -1,7 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DirectedGraph GraphDirection="LeftToRight" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
-  <Nodes />
-  <Links />
+  <Nodes>
+    <Node Id="TagCloudGenerator" Label="TagCloudGenerator" Category="Проект" />
+    <Node Id="CommandLineParser 1.9.71" Label="CommandLineParser 1.9.71" Category="Пакет" />
+  </Nodes>
+  <Links>
+    <Link Source="TagCloudGenerator" Target="CommandLineParser 1.9.71" Category="Установленный пакет" />
+  </Links>
   <Categories>
     <Category Id="Проект" />
     <Category Id="Пакет" />

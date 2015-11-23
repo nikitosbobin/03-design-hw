@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloudGenerator.Interfaces;
+using Ninject;
 
 namespace TagCloudGenerator.Classes
 {
     class PolarFunctionCloud : ICloudImageGenerator
     {
-        public PolarFunctionCloud(int height, int width, List<SolidBrush> wordsBrushes = null)
+        public PolarFunctionCloud(int width, int height, ITextDecoder decoder, 
+            ITextHandler textHandler,List<SolidBrush> wordsBrushes = null)
         {
-            Image = new Bitmap(height, width);
+            this.decoder = decoder;
+            this.textHandler = textHandler;
+            Image = new Bitmap(width, height);
             rnd = new Random(DateTime.Now.Millisecond);
             frames = new HashSet<Rectangle>();
             graph = Graphics.FromImage(Image);
@@ -25,7 +29,7 @@ namespace TagCloudGenerator.Classes
         public void DrawNextWord(Word word)
         {
             var font = new Font("Times New Roman", currentFontSize);
-            var color = wordsBrushes[rnd.Next(0, wordsBrushes.Count)];
+            var color = WordsBrushes[rnd.Next(0, WordsBrushes.Count)];
             var wordWidth = (int)(font.Size * 0.7) * word.Source.Length;
             var wordHeight = font.Height;
             Point pos;
@@ -53,13 +57,26 @@ namespace TagCloudGenerator.Classes
             return frames.Any(rect.IntersectsWith) || !a || !b || !c || !d;
         }
 
-
+        private readonly ITextDecoder decoder;
+        private readonly ITextHandler textHandler;
         private readonly Random rnd;
         private float currentFontSize;
         private HashSet<Rectangle> frames;
-        private readonly List<SolidBrush> wordsBrushes;
+        private List<SolidBrush> wordsBrushes;
+        public List<SolidBrush> WordsBrushes {
+            get { return wordsBrushes; }
+            set
+            {
+                if (value != null)
+                    wordsBrushes = value;
+            }
+        }
         public Bitmap Image { get; private set; }
-        private readonly Graphics graph;
+        public Size Size {
+            get { return new Size(Image.Width, Image.Height); }
+            set { Image = new Bitmap(value.Width, value.Height); }
+        }
+        private Graphics graph;
         private float currentAngle;
         private const float delta = (float)Math.PI / 100;
 
@@ -91,9 +108,9 @@ namespace TagCloudGenerator.Classes
             return firstItem;
         }
 
-        public void CreateImage(ITextDecoder decoder, ITextHandler parsedText)
+        public void CreateImage()
         {
-            var words = parsedText.GetWords(decoder).OrderByDescending(u => u.Frequency).ToArray();
+            var words = textHandler.GetWords(decoder).OrderByDescending(u => u.Frequency).ToArray();
             currentFontSize = Image.Height * 0.04f; //облако меняется
             int currentFreq = words[0].Frequency;
             foreach (var word in words)
