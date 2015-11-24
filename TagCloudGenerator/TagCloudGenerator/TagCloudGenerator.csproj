@@ -60,6 +60,7 @@
     <Compile Include="Interfaces\ITextDecoder.cs" />
     <Compile Include="Interfaces\ITextHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\PolarFunctionCloud_Should.cs" />
     <Compile Include="Tests\SimpleTextHandlerTests.cs" />
   </ItemGroup>
   <ItemGroup>

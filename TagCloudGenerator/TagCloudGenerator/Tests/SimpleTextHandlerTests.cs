@@ -1,6 +1,4 @@
 ﻿using NUnit.Framework;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using TagCloudGenerator.Classes;
 using TagCloudGenerator.Interfaces;
@@ -23,10 +21,10 @@ namespace TagCloudGenerator.Tests
     }
 
     [TestFixture]
-    class SimpleTextHandlerTests
+    class SimpleTextHandler_Should
     {
         [Test]
-        public static void ShouldCreateWords()
+        public static void CreateWords()
         {
             string[] words = { "word", "a", "an", "no", "by", "smartphone", "notebook" };
             Word[] expected = { new Word("smartphone"), new Word("notebook") };
@@ -42,7 +40,7 @@ namespace TagCloudGenerator.Tests
         }
 
         [Test]
-        public static void ShouldCreateWordsWithoutBoring()
+        public static void CreateWordsWithoutBoringWords()
         {
             string[] words = { "word", "a", "an", "no", "by", "smartphone", "notebook", "unittesting" };
             Word[] expected = { new Word("smartphone"), new Word("notebook") };

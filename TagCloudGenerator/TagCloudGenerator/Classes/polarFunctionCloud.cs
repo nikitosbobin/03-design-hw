@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloudGenerator.Interfaces;
-using Ninject;
 
 namespace TagCloudGenerator.Classes
 {
-    class PolarFunctionCloud : ICloudImageGenerator
+    partial class PolarFunctionCloud : ICloudImageGenerator
     {
         public PolarFunctionCloud(int width, int height, ITextDecoder decoder, 
             ITextHandler textHandler,List<SolidBrush> wordsBrushes = null)
@@ -40,7 +39,7 @@ namespace TagCloudGenerator.Classes
                 //Image.SetPixel((Image.Width / 2 + pos.X), (Image.Height / 2 - pos.Y), Color.Black);
                 thisWord = new Rectangle(pos, new Size(wordWidth, wordHeight));
                 currentAngle += delta;
-            } while (InterdsectsWithAny(thisWord));
+            } while (IntersectsWithAny(thisWord));
             graph.DrawString(word.Source, font, color,
                 (Image.Width / 2 + pos.X), (Image.Height / 2 - pos.Y));
             frames.Add(thisWord);
@@ -48,7 +47,7 @@ namespace TagCloudGenerator.Classes
             //wordWidth, wordHeight);
         }
 
-        private bool InterdsectsWithAny(Rectangle rect)
+        private bool IntersectsWithAny(Rectangle rect)
         {
             bool a = (Image.Width/2 + rect.X) > 0;
             bool b = (Image.Width/2 + rect.Right) < Image.Width;
@@ -86,13 +85,13 @@ namespace TagCloudGenerator.Classes
         /// Задаёт функцию в полярных координатах
         /// </summary>
         /// <param name="angle">Угол</param>
-        /// <param name="image">Размер изображения</param>
+        /// <param name="imageSize">Размер изображения</param>
         /// <returns></returns>
-        private static Point MainFunc(float angle, Size image)
+        private static Point MainFunc(float angle, Size imageSize)
         {
-            var nod = GetGreatestCommonDivisor(image.Height, image.Width);
-            var x = (int)(image.Width / nod * angle * Math.Cos(angle));
-            var y = (int)(image.Height / nod * angle * Math.Sin(angle));
+            var nod = GetGreatestCommonDivisor(imageSize.Height, imageSize.Width);
+            var x = (int)(imageSize.Width / nod * angle * Math.Cos(angle));
+            var y = (int)(imageSize.Height / nod * angle * Math.Sin(angle));
             return new Point(x, y);
         }
 
