@@ -25,7 +25,7 @@ namespace TagCloudGenerator.Classes
         public IEnumerable<Word> GetWords(ITextDecoder decoder)
         {
             decodedLines = decoder.GetDecodedText();
-            MakeText();
+            CreateInnerWords();
             return words;
         }
 
@@ -34,7 +34,7 @@ namespace TagCloudGenerator.Classes
             return word.Length > 5 && !BoringWords.Contains(word);
         }
 
-        private void MakeText()
+        private void CreateInnerWords()
         {
             innerWords = new Dictionary<string, Word>();
             foreach (var word in decodedLines)
@@ -51,11 +51,6 @@ namespace TagCloudGenerator.Classes
                         BoringWords.Add(word);
             }
             words = innerWords.Select(pair => pair.Value).ToArray();
-        }
-
-        public HashSet<string> GetBoringWords()
-        {
-            return BoringWords;
         }
     }
 }
