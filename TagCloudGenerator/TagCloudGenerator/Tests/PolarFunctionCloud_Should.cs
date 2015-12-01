@@ -13,7 +13,7 @@ namespace TagCloudGenerator.Classes
             [TestCase((float)Math.PI / 2, 100, 100, Result = new[] { 0, (int)Math.PI / 2 })]
             public static int[] GetRightPointToWritingWord(float angle, int width, int height)
             {
-                var currentPoint = MainFunc(angle, new Size(width, height));
+                var currentPoint = ArchimedSpiralFunc(angle, new Size(width, height));
                 return new[] { currentPoint.X, currentPoint.Y };
             }
 

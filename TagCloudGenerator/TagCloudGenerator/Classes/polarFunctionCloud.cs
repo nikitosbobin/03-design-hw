@@ -1,23 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
+using Ninject.Planning.Directives;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
 {
     partial class PolarFunctionCloud : ICloudImageGenerator
     {
+        public PolarFunctionCloud(ICommand[] commands, ITextDecoder decoder, ITextHandler textHandler)
+        {
+            this.decoder = decoder;
+            TextHandler = textHandler;
+            rnd = new Random(DateTime.Now.Millisecond);
+            frames = new HashSet<Rectangle>();
+            foreach (var command in commands)
+                command.Execute(this);
+        }
+
         public PolarFunctionCloud(int width, int height, ITextDecoder decoder, 
             ITextHandler textHandler,List<SolidBrush> wordsBrushes = null)
         {
             this.decoder = decoder;
-            this.textHandler = textHandler;
+            TextHandler = textHandler;
             Image = new Bitmap(width, height);
             rnd = new Random(DateTime.Now.Millisecond);
             frames = new HashSet<Rectangle>();
-            graph = Graphics.FromImage(Image);
-            graph.Clear(Color.CadetBlue);
+            graphics = Graphics.FromImage(Image);
+            graphics.Clear(Color.CadetBlue);
+            MoreDensity = false;
+            WordScale = 7;
             this.wordsBrushes = new List<SolidBrush>();
             if (wordsBrushes != null)
                 this.wordsBrushes = wordsBrushes;
@@ -27,7 +41,7 @@ namespace TagCloudGenerator.Classes
 
         public void DrawNextWord(Word word)
         {
-            var font = new Font("Times New Roman", currentFontSize);
+            var font = new Font(FontFamily, currentFontSize);
             var color = WordsBrushes[rnd.Next(0, WordsBrushes.Count)];
             var wordWidth = (int)(font.Size * 0.7) * word.Source.Length;
             var wordHeight = font.Height;
@@ -35,29 +49,47 @@ namespace TagCloudGenerator.Classes
             Rectangle thisWord;
             do
             {
-                pos = Func(currentAngle, new Size(Image.Width, Image.Height));
-                //Image.SetPixel((Image.Width / 2 + pos.X), (Image.Height / 2 - pos.Y), Color.Black);
+                pos = GetBlockCoords(currentAngle, new Size(Image.Width, Image.Height));
                 thisWord = new Rectangle(pos, new Size(wordWidth, wordHeight));
                 currentAngle += delta;
+                //graphics.DrawString(word.Source, font, color,
+                    //(Image.Width / 2 + pos.X), (Image.Height / 2 - pos.Y));
+                //Image.Save("outTest.png", ImageFormat.Png);
             } while (IntersectsWithAny(thisWord));
-            graph.DrawString(word.Source, font, color,
+            graphics.DrawString(word.Source, font, color,
                 (Image.Width / 2 + pos.X), (Image.Height / 2 - pos.Y));
             frames.Add(thisWord);
-            //graph.DrawRectangle(new Pen(Brushes.Black), (Image.Width / 2 + pos.X), (Image.Height / 2 - pos.Y),
-            //wordWidth, wordHeight);
         }
 
         private bool IntersectsWithAny(Rectangle rect)
         {
-            bool a = (Image.Width/2 + rect.X) > 0;
-            bool b = (Image.Width/2 + rect.Right) < Image.Width;
-            bool c = (Image.Height/2 - rect.Y) > 0;
-            bool d = (Image.Height/2 - rect.Bottom) < Image.Height;
-            return frames.Any(rect.IntersectsWith) || !a || !b || !c || !d;
+            bool insideLeftEdge = (Image.Width/2 + rect.X) > 0;
+            bool insideRigthEdge = (Image.Width/2 + rect.Right) < Image.Width;
+            bool insideTopEdge = (Image.Height/2 - rect.Y) > 0;
+            bool insideBottomEdge = (Image.Height/2 - rect.Bottom) < Image.Height;
+            return frames.Any(rect.IntersectsWith) || !insideLeftEdge || !insideRigthEdge || !insideTopEdge || !insideBottomEdge;
         }
 
+        public string FontFamily { get; set; }
+        private float wordScale;
+        public float WordScale {
+            get
+            {
+                if (wordScale == 0)
+                    return 0.07f;
+                return wordScale; 
+            }
+            set
+            {
+                if (value >= 1 && value <= 9)
+                    wordScale = value / 100;
+                else
+                    wordScale = 0.07f;
+            }
+        }
+        public bool MoreDensity { get; set; }
         private readonly ITextDecoder decoder;
-        private readonly ITextHandler textHandler;
+        public ITextHandler TextHandler { get; set; }
         private readonly Random rnd;
         private float currentFontSize;
         private HashSet<Rectangle> frames;
@@ -73,13 +105,18 @@ namespace TagCloudGenerator.Classes
         public Bitmap Image { get; private set; }
         public Size Size {
             get { return new Size(Image.Width, Image.Height); }
-            set { Image = new Bitmap(value.Width, value.Height); }
+            set
+            {
+                Image = new Bitmap(value.Width, value.Height);
+                graphics = Graphics.FromImage(Image);
+                graphics.Clear(Color.CadetBlue);
+            }
         }
-        private Graphics graph;
+        private Graphics graphics;
         private float currentAngle;
         private const float delta = (float)Math.PI / 100;
 
-        public Func<float, Size, Point> Func = MainFunc;
+        public Func<float, Size, Point> GetBlockCoords = ArchimedSpiralFunc;
 
         /// <summary>
         /// Задаёт функцию в полярных координатах
@@ -87,11 +124,11 @@ namespace TagCloudGenerator.Classes
         /// <param name="angle">Угол</param>
         /// <param name="imageSize">Размер изображения</param>
         /// <returns></returns>
-        private static Point MainFunc(float angle, Size imageSize)
+        private static Point ArchimedSpiralFunc(float angle, Size imageSize)
         {
             var nod = GetGreatestCommonDivisor(imageSize.Height, imageSize.Width);
-            var x = (int)(imageSize.Width / nod * angle * Math.Cos(angle));
-            var y = (int)(imageSize.Height / nod * angle * Math.Sin(angle));
+            var x = (int)((double)imageSize.Width / nod * angle * Math.Cos(angle));
+            var y = (int)((double)imageSize.Height / nod * angle * Math.Sin(angle));
             return new Point(x, y);
         }
 
@@ -109,8 +146,8 @@ namespace TagCloudGenerator.Classes
 
         public void CreateImage()
         {
-            var words = textHandler.GetWords(decoder).OrderByDescending(u => u.Frequency).ToArray();
-            currentFontSize = Image.Height * 0.04f; //облако меняется
+            var words = TextHandler.GetWords(decoder).OrderByDescending(u => u.Frequency).ToArray();
+            currentFontSize = Image.Height * WordScale;
             int currentFreq = words[0].Frequency;
             foreach (var word in words)
             {
@@ -120,7 +157,8 @@ namespace TagCloudGenerator.Classes
                     currentFreq = word.Frequency;
                 }
                 DrawNextWord(word);
-                //currentAngle = 0; //облако меняется
+                if (MoreDensity) currentAngle = 0;
+
             }
         }
     }

@@ -8,13 +8,7 @@ namespace TagCloudGenerator.Classes
     {
         public SimpleTextHandler(params string[] boringWords)
         {
-            BoringWords = new HashSet<string>();
-            if (boringWords != null && boringWords.Length != 0)
-                foreach (var boringWord in boringWords)
-                {
-                    if (!BoringWords.Contains(boringWord.ToLower()))
-                        BoringWords.Add(boringWord.ToLower());
-                }
+            BoringWords = new HashSet<string>(boringWords ?? new string[0]);
         }
 
         private Dictionary<string, Word> innerWords;
