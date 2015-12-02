@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using Ninject.Infrastructure.Language;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes.DefaultCommands
 {
     class SetBoringWords : ICommand
     {
-        public void Execute(ICloudImageGenerator cloud)
+        public void Execute(ICloudGenerator cloud)
         {
-            cloud.TextHandler.BoringWords = boringWords;
+            cloud.TextHandler.BoringWords = _boringWords;
         }
 
         public ICommand CreateCommand(string stringCommand)
@@ -22,13 +19,13 @@ namespace TagCloudGenerator.Classes.DefaultCommands
                 throw new Exception();
             stringCommand = stringCommand.Substring(8, stringCommand.Length - 9);
             var splited = stringCommand.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            boringWords = new HashSet<string>();
+            _boringWords = new HashSet<string>();
             foreach (var word in splited)
-                boringWords.Add(word);
+                _boringWords.Add(word);
             return this;
         }
 
-        private HashSet<string> boringWords;
+        private HashSet<string> _boringWords;
 
         public string GetDescription()
         {

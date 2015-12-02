@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text.RegularExpressions;
 using Ninject;
-using NUnit.Framework.Constraints;
-using TagCloudGenerator.Classes.DefaultCommands;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
@@ -19,14 +14,13 @@ namespace TagCloudGenerator.Classes
             var kernel = new StandardKernel();
             kernel.Bind<ITextDecoder>().To<TxtDecoder>().WithConstructorArgument(args[0]);
             kernel.Bind<ITextHandler>().To<SimpleTextHandler>();
-            kernel.Bind<ICloudImageGenerator>()
+            kernel.Bind<ICloudGenerator>()
                 .To<PolarFunctionCloud>()
                 .WithConstructorArgument("commands", parser.GetCommands());
+            kernel.Bind<ICloudImageGenerator>().To<ImageGenerator>();
             kernel.Bind<IImageEncoder>().To<PngEncoder>();
-            if (kernel.Get<IImageEncoder>().SaveImage("out"))
-                Console.WriteLine("Запись прошла успешно");
-            else
-                Console.WriteLine("Запись не удалась");
+            kernel.Get<IImageEncoder>().SaveImage("out");
+            Console.WriteLine("Я всё");
             Console.ReadKey();
         }
     }

@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes.DefaultCommands
 {
     class SetDensityFlag : ICommand
     {
-        public void Execute(ICloudImageGenerator cloud)
+        public void Execute(ICloudGenerator cloud)
         {
             cloud.MoreDensity = true;
         }

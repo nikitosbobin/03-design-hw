@@ -7,9 +7,9 @@ namespace TagCloudGenerator.Classes.DefaultCommands
 {
     class SetSize : ICommand
     {
-        public void Execute(ICloudImageGenerator cloud)
+        public void Execute(ICloudGenerator cloud)
         {
-            cloud.Size = size;
+            cloud.Size = _size;
         }
 
         public ICommand CreateCommand(string stringCommand)
@@ -19,11 +19,11 @@ namespace TagCloudGenerator.Classes.DefaultCommands
                 throw new Exception();
             stringCommand = stringCommand.Substring(5);
             var splitted = stringCommand.Split(new []{ ',' }, StringSplitOptions.RemoveEmptyEntries);
-            size = new Size(int.Parse(splitted[0]), int.Parse(splitted[1]));
+            _size = new Size(int.Parse(splitted[0]), int.Parse(splitted[1]));
             return this;
         }
 
-        private Size size;
+        private Size _size;
 
         public string GetDescription()
         {

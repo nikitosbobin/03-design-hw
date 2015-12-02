@@ -1,26 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes.DefaultCommands
 {
     class SetWordsColors : ICommand
     {
-        public void Execute(ICloudImageGenerator cloud)
+        public void Execute(ICloudGenerator cloud)
         {
-            cloud.WordsBrushes = wordsBrushes;
+            cloud.WordsBrushes = _wordsBrushes;
         }
 
-        private List<SolidBrush> wordsBrushes;
+        private List<SolidBrush> _wordsBrushes;
 
         public ICommand CreateCommand(string stringCommand)
         {
-            wordsBrushes = new List<SolidBrush>();
+            _wordsBrushes = new List<SolidBrush>();
             var pattern = "colors:<.+>";
             var converter = new ColorConverter();
             if (!Regex.IsMatch(stringCommand, pattern))
@@ -38,7 +35,7 @@ namespace TagCloudGenerator.Classes.DefaultCommands
                 {
                     throw new Exception("Can not convert" + color);
                 }
-                wordsBrushes.Add(new SolidBrush(tempColor));
+                _wordsBrushes.Add(new SolidBrush(tempColor));
             }
             return this;
         }

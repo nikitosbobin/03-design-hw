@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes.DefaultCommands
 {
     class SetFontFamily : ICommand
     {
-        public void Execute(ICloudImageGenerator cloud)
+        public void Execute(ICloudGenerator cloud)
         {
-            cloud.FontFamily = fontFamily;
+            cloud.FontFamily = _fontFamily;
         }
 
         public ICommand CreateCommand(string stringCommand)
@@ -21,12 +17,12 @@ namespace TagCloudGenerator.Classes.DefaultCommands
             if (!Regex.IsMatch(stringCommand, pattern))
                 throw new Exception();
             stringCommand = stringCommand.Substring(5);
-            fontFamily = stringCommand;
+            _fontFamily = stringCommand;
             return this;
         }
 
 
-        private string fontFamily;
+        private string _fontFamily;
 
         public string GetDescription()
         {

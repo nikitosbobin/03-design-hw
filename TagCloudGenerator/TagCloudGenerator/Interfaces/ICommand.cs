@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TagCloudGenerator.Interfaces
+﻿namespace TagCloudGenerator.Interfaces
 {
     interface ICommand
     {
-        void Execute(ICloudImageGenerator cloud);
+        void Execute(ICloudGenerator cloud);
         ICommand CreateCommand(string stringCommand);
         string GetDescription();
     }

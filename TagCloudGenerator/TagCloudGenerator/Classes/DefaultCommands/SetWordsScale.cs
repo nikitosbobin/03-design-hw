@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes.DefaultCommands
 {
     class SetWordsScale : ICommand
     {
-        public void Execute(ICloudImageGenerator cloud)
+        public void Execute(ICloudGenerator cloud)
         {
-            cloud.WordScale = wordScale;
+            cloud.WordScale = _wordScale;
         }
 
         public ICommand CreateCommand(string stringCommand)
@@ -21,11 +17,11 @@ namespace TagCloudGenerator.Classes.DefaultCommands
             if (!Regex.IsMatch(stringCommand, pattern))
                 throw new Exception();
             stringCommand = stringCommand[6].ToString();
-            wordScale = int.Parse(stringCommand);
+            _wordScale = int.Parse(stringCommand);
             return this;
         }
 
-        private int wordScale;
+        private int _wordScale;
 
         public string GetDescription()
         {

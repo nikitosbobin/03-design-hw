@@ -4,6 +4,6 @@ namespace TagCloudGenerator.Interfaces
 {
     interface IImageEncoder
     {
-        bool SaveImage(String name);
+        void SaveImage(string name);
     }
 }
