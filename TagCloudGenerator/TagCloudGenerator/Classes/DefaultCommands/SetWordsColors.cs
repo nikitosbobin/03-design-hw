@@ -8,6 +8,11 @@ namespace TagCloudGenerator.Classes.DefaultCommands
 {
     class SetWordsColors : ICommand
     {
+        public SetWordsColors(CommandsParser parser)
+        {
+            ParentParser = parser;
+        }
+
         public void Execute(ICloudGenerator cloud)
         {
             cloud.WordsBrushes = _wordsBrushes;
@@ -38,6 +43,13 @@ namespace TagCloudGenerator.Classes.DefaultCommands
                 _wordsBrushes.Add(new SolidBrush(tempColor));
             }
             return this;
+        }
+
+        public CommandsParser ParentParser { get; }
+
+        public string GetKeyWord()
+        {
+            return "colors";
         }
 
         public string GetDescription()

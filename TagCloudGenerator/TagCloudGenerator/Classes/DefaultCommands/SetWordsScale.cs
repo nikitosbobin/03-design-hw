@@ -6,6 +6,11 @@ namespace TagCloudGenerator.Classes.DefaultCommands
 {
     class SetWordsScale : ICommand
     {
+        public SetWordsScale(CommandsParser parser)
+        {
+            ParentParser = parser;
+        }
+
         public void Execute(ICloudGenerator cloud)
         {
             cloud.WordScale = _wordScale;
@@ -19,6 +24,13 @@ namespace TagCloudGenerator.Classes.DefaultCommands
             stringCommand = stringCommand[6].ToString();
             _wordScale = int.Parse(stringCommand);
             return this;
+        }
+
+        public CommandsParser ParentParser { get; }
+
+        public string GetKeyWord()
+        {
+            return "scale";
         }
 
         private int _wordScale;

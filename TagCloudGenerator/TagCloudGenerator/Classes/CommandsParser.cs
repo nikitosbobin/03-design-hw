@@ -9,44 +9,60 @@ namespace TagCloudGenerator.Classes
 {
     class CommandsParser
     {
-        public bool CreateCommands(string[] args)
-        {
-            if (!File.Exists(args[0]))
-               return false;
-            var pattern = ".+:|.+$";
-            _commands = new HashSet<ICommand>();
-            string keyWord;
-            foreach (var command in args.Skip(1))
-            {
-                keyWord = Regex.Match(command, pattern).ToString();
-                if (registeredCommands.ContainsKey(keyWord))
-                    _commands.Add(registeredCommands[keyWord].CreateCommand(command));
-            }
-            return true;
-        }
-
         private HashSet<ICommand> _commands;
+        private string[] _args;
 
         public ICommand[] GetCommands()
         {
             return _commands.ToArray();
         }
 
-        private Dictionary<string, ICommand> registeredCommands = new Dictionary<string, ICommand>
+        public Dictionary<string, ICommand> RegisteredCommands { get; }
+
+        public bool ExecuteAllCommands()
         {
-            { "size:", new SetSize() },
-            { "scale:", new SetWordsScale() },
-            { "moreDensity", new SetDensityFlag() },
-            { "boring:", new SetBoringWords() },
-            { "font:", new SetFontFamily() },
-            { "colors:", new SetWordsColors()}
-        };
+            if (_commands.Count == 1 && _commands.ToArray()[0].GetKeyWord() == "help")
+            {
+                _commands.ToArray()[0].Execute(Cloud);
+                return false;
+            }
+            foreach (var command in _commands)
+                command.Execute(Cloud);
+            return true;
+        }
+
+        public ICloudGenerator Cloud { get; }
+
+        public CommandsParser(ICloudGenerator cloud, string[] args)
+        {
+            Cloud = cloud;
+            _args = args;
+            RegisteredCommands = new Dictionary<string, ICommand>
+            {
+                { "size", new SetSize(this) },
+                { "scale", new SetWordsScale(this) },
+                { "moreDensity", new SetDensityFlag(this) },
+                { "boring", new SetBoringWords(this) },
+                { "font", new SetFontFamily(this) },
+                { "colors", new SetWordsColors(this)},
+                { "help", new Help(this) }
+            };
+            _commands = new HashSet<ICommand>();
+            var pattern = ".+:|.+$";
+            string keyWord;
+            foreach (var command in _args)
+            {
+                keyWord = Regex.Match(command, pattern).ToString().Replace(":", "");
+                if (RegisteredCommands.ContainsKey(keyWord))
+                    _commands.Add(RegisteredCommands[keyWord].CreateCommand(command));
+            }
+        }
 
         public bool AddForeignCommand(string keyWord, ICommand command)
         {
             try
             {
-                registeredCommands.Add(keyWord, command);
+                RegisteredCommands.Add(keyWord, command);
                 return true;
             }
             catch

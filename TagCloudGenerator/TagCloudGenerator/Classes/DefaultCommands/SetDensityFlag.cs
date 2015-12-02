@@ -5,9 +5,19 @@ namespace TagCloudGenerator.Classes.DefaultCommands
 {
     class SetDensityFlag : ICommand
     {
+        public SetDensityFlag(CommandsParser parser)
+        {
+            ParentParser = parser;
+        }
+
         public void Execute(ICloudGenerator cloud)
         {
             cloud.MoreDensity = true;
+        }
+
+        public string GetKeyWord()
+        {
+            return "moreDensity";
         }
 
         public ICommand CreateCommand(string stringCommand)
@@ -16,6 +26,8 @@ namespace TagCloudGenerator.Classes.DefaultCommands
                 throw new Exception();
             return this;
         }
+
+        public CommandsParser ParentParser { get; }
 
         public string GetDescription()
         {

@@ -8,14 +8,12 @@ namespace TagCloudGenerator.Classes
 {
     partial class PolarFunctionCloud : ICloudGenerator
     {
-        public PolarFunctionCloud(ICommand[] commands, ITextDecoder decoder, ITextHandler textHandler)
+        public PolarFunctionCloud(ITextDecoder decoder, ITextHandler textHandler)
         {
             _decoder = decoder;
             TextHandler = textHandler;
             _rnd = new Random(DateTime.Now.Millisecond);
             frames = new HashSet<Rectangle>();
-            foreach (var command in commands)
-                command.Execute(this);
         }
 
         public PolarFunctionCloud(int width, int height, ITextDecoder decoder, 
@@ -62,7 +60,18 @@ namespace TagCloudGenerator.Classes
             return frames.Any(rect.IntersectsWith) || !insideLeftEdge || !insideRigthEdge || !insideTopEdge || !insideBottomEdge;
         }
 
-        public string FontFamily { get; set; }
+        private string _fontFamily;
+
+        public string FontFamily
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_fontFamily))
+                    _fontFamily = "Times New Roman";
+                return _fontFamily;
+            }
+            set { _fontFamily = value; }
+        }
         private float _wordScale;
         public IWord[] Words { get; set; }
 
@@ -70,7 +79,7 @@ namespace TagCloudGenerator.Classes
             get
             {
                 if (_wordScale == 0)
-                    return 0.07f;
+                    _wordScale = 0.07f;
                 return _wordScale; 
             }
             set
@@ -89,7 +98,14 @@ namespace TagCloudGenerator.Classes
         private HashSet<Rectangle> frames;
         private List<SolidBrush> _wordsBrushes;
         public List<SolidBrush> WordsBrushes {
-            get { return _wordsBrushes; }
+            get {
+                if (_wordsBrushes == null)
+                {
+                    _wordsBrushes = new List<SolidBrush>();
+                    _wordsBrushes.Add(new SolidBrush(Color.Black));
+                }
+                return _wordsBrushes;
+            }
             set
             {
                 if (value != null)
@@ -97,7 +113,17 @@ namespace TagCloudGenerator.Classes
             }
         }
 
-        public Size Size { get; set; }
+        public Size Size
+        {
+            get
+            {
+                if (_size != null)
+                    return _size;
+                return _size = new Size(500, 500); 
+            }
+            set { _size = value; }
+        }
+        private Size _size;
         private float _currentAngle;
         private const float Delta = (float)Math.PI / 100;
 

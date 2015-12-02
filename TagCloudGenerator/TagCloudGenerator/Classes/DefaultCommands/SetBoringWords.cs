@@ -7,6 +7,11 @@ namespace TagCloudGenerator.Classes.DefaultCommands
 {
     class SetBoringWords : ICommand
     {
+        public SetBoringWords(CommandsParser parser)
+        {
+            ParentParser = parser;
+        }
+
         public void Execute(ICloudGenerator cloud)
         {
             cloud.TextHandler.BoringWords = _boringWords;
@@ -23,6 +28,13 @@ namespace TagCloudGenerator.Classes.DefaultCommands
             foreach (var word in splited)
                 _boringWords.Add(word);
             return this;
+        }
+
+        public CommandsParser ParentParser { get; }
+
+        public string GetKeyWord()
+        {
+            return "boring";
         }
 
         private HashSet<string> _boringWords;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Ninject;
 using TagCloudGenerator.Interfaces;
 
@@ -8,19 +9,22 @@ namespace TagCloudGenerator.Classes
     {
         static void Main(string[] args)
         {
-            var parser = new CommandsParser();
-            if (!parser.CreateCommands(args))
-                Console.WriteLine("Commands parsing error");
             var kernel = new StandardKernel();
             kernel.Bind<ITextDecoder>().To<TxtDecoder>().WithConstructorArgument(args[0]);
             kernel.Bind<ITextHandler>().To<SimpleTextHandler>();
-            kernel.Bind<ICloudGenerator>()
-                .To<PolarFunctionCloud>()
-                .WithConstructorArgument("commands", parser.GetCommands());
-            kernel.Bind<ICloudImageGenerator>().To<ImageGenerator>();
-            kernel.Bind<IImageEncoder>().To<PngEncoder>();
-            kernel.Get<IImageEncoder>().SaveImage("out");
-            Console.WriteLine("Я всё");
+            kernel.Bind<ICloudGenerator>().To<PolarFunctionCloud>();
+            kernel.Bind<CommandsParser>().ToSelf()
+                .WithConstructorArgument("cloud", kernel.Get<ICloudGenerator>())
+                .WithConstructorArgument("args", args);
+            if (kernel.Get<CommandsParser>().ExecuteAllCommands())
+            {
+                kernel.Bind<ICloudImageGenerator>()
+                    .To<ImageGenerator>()
+                    .WithConstructorArgument("cloud", kernel.Get<CommandsParser>().Cloud);
+                kernel.Bind<IImageEncoder>().To<PngEncoder>();
+                kernel.Get<IImageEncoder>().SaveImage("out");
+                Console.WriteLine("Я всё");
+            }
             Console.ReadKey();
         }
     }

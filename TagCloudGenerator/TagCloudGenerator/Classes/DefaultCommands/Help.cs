@@ -1,28 +1,27 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes.DefaultCommands
 {
-    class SetFontFamily : ICommand
+    class Help : ICommand
     {
-        public SetFontFamily(CommandsParser parser)
+        public Help(CommandsParser parser)
         {
             ParentParser = parser;
         }
 
         public void Execute(ICloudGenerator cloud)
         {
-            cloud.FontFamily = _fontFamily;
+            foreach (var command in ParentParser.RegisteredCommands)
+            {
+                Console.WriteLine(command.Value.GetDescription());
+            }
         }
 
         public ICommand CreateCommand(string stringCommand)
         {
-            var pattern = "font:[a-zA-Z ]";
-            if (!Regex.IsMatch(stringCommand, pattern))
+            if (stringCommand != "help")
                 throw new Exception();
-            stringCommand = stringCommand.Substring(5);
-            _fontFamily = stringCommand;
             return this;
         }
 
@@ -30,14 +29,12 @@ namespace TagCloudGenerator.Classes.DefaultCommands
 
         public string GetKeyWord()
         {
-            return "font";
+            return "help";
         }
-
-        private string _fontFamily;
 
         public string GetDescription()
         {
-            return "Задаёт шрифт печати слов.\nИспользование:\nfont:[Font name]";
+            return "Выводит описание всех возможных команд.\nИспользование:\nhelp";
         }
     }
 }

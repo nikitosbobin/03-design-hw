@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\CommandsParser.cs" />
+    <Compile Include="Classes\DefaultCommands\Help.cs" />
     <Compile Include="Classes\DefaultCommands\SetFontFamily.cs" />
     <Compile Include="Classes\DefaultCommands\SetDensityFlag.cs" />
     <Compile Include="Classes\DefaultCommands\SetWordsColors.cs" />
