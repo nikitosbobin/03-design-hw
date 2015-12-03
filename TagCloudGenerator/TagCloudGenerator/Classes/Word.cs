@@ -25,18 +25,5 @@ namespace TagCloudGenerator.Classes
             }
             set { _font = value; }
         }
-
-        private SolidBrush _solidBrush;
-
-        public SolidBrush SolidBrush
-        {
-            get
-            {
-                if (_solidBrush == null)
-                    _solidBrush = new SolidBrush(Color.Black);
-                return _solidBrush;
-            }
-            set { _solidBrush = value; }
-        }
     }
 }

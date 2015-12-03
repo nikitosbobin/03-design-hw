@@ -8,6 +8,5 @@ namespace TagCloudGenerator.Interfaces
         int Frequency { get; set; }
         Rectangle WordBlock { get; set; }
         Font Font { get; set; }
-        SolidBrush SolidBrush { get; set; }
     }
 }
