@@ -57,6 +57,7 @@
     <Compile Include="Classes\DefaultCommands\SetWordsScale.cs" />
     <Compile Include="Classes\ImageGenerator.cs" />
     <Compile Include="Classes\PngEncoder.cs" />
+    <Compile Include="Classes\PolarFunctionCloud.cs" />
     <Compile Include="Classes\SimpleTextHandler.cs" />
     <Compile Include="Classes\DefaultCommands\SetBoringWords.cs" />
     <Compile Include="Classes\DefaultCommands\SetSize.cs" />
@@ -65,12 +66,12 @@
     <Compile Include="Interfaces\ICloudImageGenerator.cs" />
     <Compile Include="Interfaces\ICloudGenerator.cs" />
     <Compile Include="Classes\Program.cs" />
-    <Compile Include="Classes\PolarFunctionCloud.cs" />
+    <Compile Include="Classes\ArchimedSpiralFunctionCloud.cs" />
     <Compile Include="Interfaces\ICommand.cs" />
     <Compile Include="Interfaces\IImageEncoder.cs" />
     <Compile Include="Interfaces\ITextDecoder.cs" />
     <Compile Include="Interfaces\ITextHandler.cs" />
-    <Compile Include="Interfaces\IWord.cs" />
+    <Compile Include="Interfaces\IWordBlock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\PolarFunctionCloud_Should.cs" />
     <Compile Include="Tests\SimpleTextHandlerTests.cs" />

@@ -3,7 +3,7 @@ using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
 {
-    class Word : IWord
+    class Word : IWordBlock
     {
         public Word(string source, int frequency = 1)
         {

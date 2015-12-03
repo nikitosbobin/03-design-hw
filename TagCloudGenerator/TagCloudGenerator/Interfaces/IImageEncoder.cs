@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TagCloudGenerator.Interfaces
+﻿namespace TagCloudGenerator.Interfaces
 {
     interface IImageEncoder
     {

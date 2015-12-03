@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TagCloudGenerator.Classes.DefaultCommands;
@@ -10,7 +9,6 @@ namespace TagCloudGenerator.Classes
     class CommandsParser
     {
         private HashSet<ICommand> _commands;
-        private string[] _args;
 
         public ICommand[] GetCommands()
         {
@@ -23,11 +21,11 @@ namespace TagCloudGenerator.Classes
         {
             if (_commands.Count == 1 && _commands.ToArray()[0].GetKeyWord() == "help")
             {
-                _commands.ToArray()[0].Execute(Cloud);
+                _commands.ToArray()[0].Execute();
                 return false;
             }
             foreach (var command in _commands)
-                command.Execute(Cloud);
+                command.Execute();
             return true;
         }
 
@@ -36,7 +34,6 @@ namespace TagCloudGenerator.Classes
         public CommandsParser(ICloudGenerator cloud, string[] args)
         {
             Cloud = cloud;
-            _args = args;
             RegisteredCommands = new Dictionary<string, ICommand>
             {
                 { "size", new SetSize(this) },
@@ -50,7 +47,7 @@ namespace TagCloudGenerator.Classes
             _commands = new HashSet<ICommand>();
             var pattern = ".+:|.+$";
             string keyWord;
-            foreach (var command in _args)
+            foreach (var command in args)
             {
                 keyWord = Regex.Match(command, pattern).ToString().Replace(":", "");
                 if (RegisteredCommands.ContainsKey(keyWord))

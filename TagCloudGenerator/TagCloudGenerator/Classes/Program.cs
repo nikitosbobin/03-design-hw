@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Ninject;
 using TagCloudGenerator.Interfaces;
 
@@ -12,16 +11,14 @@ namespace TagCloudGenerator.Classes
             var kernel = new StandardKernel();
             kernel.Bind<ITextDecoder>().To<TxtDecoder>().WithConstructorArgument(args[0]);
             kernel.Bind<ITextHandler>().To<SimpleTextHandler>();
-            kernel.Bind<ICloudGenerator>().To<PolarFunctionCloud>();
+            kernel.Bind<ICloudGenerator>().To<ArchimedSpiralFunctionCloud>();
             kernel.Bind<CommandsParser>().ToSelf()
                 .WithConstructorArgument("cloud", kernel.Get<ICloudGenerator>())
                 .WithConstructorArgument("args", args);
             if (kernel.Get<CommandsParser>().ExecuteAllCommands())
             {
-                kernel.Bind<ICloudImageGenerator>()
-                    .To<ImageGenerator>()
-                    .WithConstructorArgument("cloud", kernel.Get<CommandsParser>().Cloud);
-                kernel.Bind<IImageEncoder>().To<PngEncoder>();
+                kernel.Bind<IImageEncoder>().To<PngEncoder>()
+                    .WithConstructorArgument("cloudImage", kernel.Get<CommandsParser>().Cloud.Generator);
                 kernel.Get<IImageEncoder>().SaveImage("out");
                 Console.WriteLine("Я всё");
             }

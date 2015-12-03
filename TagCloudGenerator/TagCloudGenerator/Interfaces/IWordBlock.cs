@@ -2,7 +2,7 @@
 
 namespace TagCloudGenerator.Interfaces
 {
-    public interface IWord
+    public interface IWordBlock
     {
         string Source { get; set; }
         int Frequency { get; set; }

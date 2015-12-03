@@ -23,11 +23,11 @@ namespace TagCloudGenerator.Tests
     [TestFixture]
     class SimpleTextHandler_Should
     {
-        public static void DoTest(string[] words, IWord[] expected, string[] boring = null)
+        public static void DoTest(string[] words, IWordBlock[] expected, string[] boring = null)
         {
             ITextDecoder fakeDecoder = new DecoderForTests(words);
             var handler = new SimpleTextHandler(boring);
-            IWord[] actual = handler.GetWords(fakeDecoder).ToArray();
+            IWordBlock[] actual = handler.GetWords(fakeDecoder).ToArray();
             for (int i = 0; i < expected.Length; ++i)
             {
                 Assert.AreEqual(expected[i].Source, actual[i].Source);

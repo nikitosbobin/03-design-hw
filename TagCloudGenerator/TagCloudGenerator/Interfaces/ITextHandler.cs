@@ -5,6 +5,6 @@ namespace TagCloudGenerator.Interfaces
     interface ITextHandler
     {
         HashSet<string> BoringWords { get; set; }
-        IEnumerable<IWord> GetWords(ITextDecoder decoder);
+        IEnumerable<IWordBlock> GetWords(ITextDecoder decoder);
     }
 }

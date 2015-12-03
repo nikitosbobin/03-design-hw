@@ -11,9 +11,9 @@ namespace TagCloudGenerator.Classes.DefaultCommands
             ParentParser = parser;
         }
 
-        public void Execute(ICloudGenerator cloud)
+        public void Execute()
         {
-            cloud.FontFamily = _fontFamily;
+            ParentParser.Cloud.FontFamily = _fontFamily;
         }
 
         public ICommand CreateCommand(string stringCommand)

@@ -4,7 +4,7 @@ namespace TagCloudGenerator.Interfaces
 {
     interface ICommand
     {
-        void Execute(ICloudGenerator cloud);
+        void Execute();
         ICommand CreateCommand(string stringCommand);
         CommandsParser ParentParser { get; }
         string GetKeyWord();

@@ -13,9 +13,9 @@ namespace TagCloudGenerator.Classes.DefaultCommands
             ParentParser = parser;
         }
 
-        public void Execute(ICloudGenerator cloud)
+        public void Execute()
         {
-            cloud.WordsBrushes = _wordsBrushes;
+            ParentParser.Cloud.Generator.WordsBrushes = _wordsBrushes;
         }
 
         private List<SolidBrush> _wordsBrushes;

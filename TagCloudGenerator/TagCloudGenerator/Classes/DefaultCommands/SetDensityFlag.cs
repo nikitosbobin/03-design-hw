@@ -10,9 +10,9 @@ namespace TagCloudGenerator.Classes.DefaultCommands
             ParentParser = parser;
         }
 
-        public void Execute(ICloudGenerator cloud)
+        public void Execute()
         {
-            cloud.MoreDensity = true;
+            ParentParser.Cloud.MoreDensity = true;
         }
 
         public string GetKeyWord()

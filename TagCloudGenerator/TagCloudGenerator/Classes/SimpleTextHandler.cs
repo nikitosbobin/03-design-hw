@@ -16,7 +16,7 @@ namespace TagCloudGenerator.Classes
         public HashSet<string> BoringWords { get; set; }
         private Word[] _words;
 
-        public IEnumerable<IWord> GetWords(ITextDecoder decoder)
+        public IEnumerable<IWordBlock> GetWords(ITextDecoder decoder)
         {
             _decodedLines = decoder.GetDecodedText();
             CreateInnerWords();

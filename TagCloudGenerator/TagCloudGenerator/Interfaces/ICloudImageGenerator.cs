@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace TagCloudGenerator.Interfaces
 {
@@ -6,6 +7,7 @@ namespace TagCloudGenerator.Interfaces
     {
         Bitmap Image { get; set; }
         ICloudGenerator Cloud { get; }
+        List<SolidBrush> WordsBrushes { get; set; }
         void CreateImage();
     }
 }
