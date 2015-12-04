@@ -6,7 +6,7 @@ namespace TagCloudGenerator.Interfaces
     {
         string Source { get; set; }
         int Frequency { get; set; }
-        Rectangle WordBlock { get; set; }
+        Rectangle WordRectangle { get; set; }
         Font Font { get; set; }
     }
 }

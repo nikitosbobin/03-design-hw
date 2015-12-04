@@ -60,7 +60,7 @@ namespace TagCloudGenerator.Classes
             foreach (var word in _words)
             {
                 graphics.DrawString(word.Source, word.Font, WordsBrushes[_rnd.Next(0, WordsBrushes.Count)],
-                    (Image.Width / 2 + word.WordBlock.X), (Image.Height / 2 - word.WordBlock.Y));
+                    (Image.Width / 2 + word.WordRectangle.X), (Image.Height / 2 - word.WordRectangle.Y));
                 Thread.Sleep(1); //рандом не успевает разные цвета выбирать
             }
         }

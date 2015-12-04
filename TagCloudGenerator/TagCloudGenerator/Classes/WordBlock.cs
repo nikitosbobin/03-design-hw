@@ -3,9 +3,9 @@ using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
 {
-    class Word : IWordBlock
+    class WordBlock : IWordBlock
     {
-        public Word(string source, int frequency = 1)
+        public WordBlock(string source, int frequency = 1)
         {
             Source = source.ToLower();
             Frequency = frequency;
@@ -13,7 +13,7 @@ namespace TagCloudGenerator.Classes
 
         public string Source { get; set; }
         public int Frequency { get; set; }
-        public Rectangle WordBlock { get; set; }
+        public Rectangle WordRectangle { get; set; }
         private Font _font;
         public Font Font
         {

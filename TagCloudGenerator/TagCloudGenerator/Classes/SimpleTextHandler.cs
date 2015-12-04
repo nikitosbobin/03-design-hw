@@ -11,10 +11,10 @@ namespace TagCloudGenerator.Classes
             BoringWords = new HashSet<string>(boringWords ?? new string[0]);
         }
 
-        private Dictionary<string, Word> _innerWords;
+        private Dictionary<string, WordBlock> _innerWords;
         private string[] _decodedLines;
         public HashSet<string> BoringWords { get; set; }
-        private Word[] _words;
+        private WordBlock[] _words;
 
         public IEnumerable<IWordBlock> GetWords(ITextDecoder decoder)
         {
@@ -30,7 +30,7 @@ namespace TagCloudGenerator.Classes
 
         private void CreateInnerWords()
         {
-            _innerWords = new Dictionary<string, Word>();
+            _innerWords = new Dictionary<string, WordBlock>();
             foreach (var word in _decodedLines)
             {
                 if (IsItRightWord(word))
@@ -38,7 +38,7 @@ namespace TagCloudGenerator.Classes
                     if (_innerWords.ContainsKey(word))
                         _innerWords[word].Frequency++;
                     else
-                        _innerWords.Add(word, new Word(word));
+                        _innerWords.Add(word, new WordBlock(word));
                 }
                 else
                     if (!BoringWords.Contains(word))

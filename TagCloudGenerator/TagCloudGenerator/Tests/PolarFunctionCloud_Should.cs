@@ -4,19 +4,11 @@ using NUnit.Framework;
 
 namespace TagCloudGenerator.Classes
 {
-    partial class ArchimedSpiralFunctionCloud
+    partial class PolarFunctionCloud
     {
         [TestFixture]
         class PolarFunctionCloud_Should
         {
-            [TestCase(1000, 1, Result = 1)]
-            [TestCase(144, 12, Result = 12)]
-            [TestCase(25, 5, Result = 5)]
-            public static int GetRightGreatestCommonDivisor(int a, int b)
-            {
-                return GetGreatestCommonDivisor(a, b);
-            }
-
             [Test]
             public static void DetermineRectsIntersection()
             {

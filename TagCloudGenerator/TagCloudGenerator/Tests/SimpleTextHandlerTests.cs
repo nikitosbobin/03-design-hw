@@ -39,7 +39,7 @@ namespace TagCloudGenerator.Tests
         public static void CreateWords()
         {
             string[] words = { "word", "a", "an", "no", "by", "smartphone", "notebook" };
-            Word[] expected = { new Word("smartphone"), new Word("notebook") };
+            WordBlock[] expected = { new WordBlock("smartphone"), new WordBlock("notebook") };
             DoTest(words, expected);
         }
 
@@ -47,7 +47,7 @@ namespace TagCloudGenerator.Tests
         public static void CreateWordsWithoutBoringWords()
         {
             string[] words = { "word", "a", "an", "no", "by", "smartphone", "notebook", "unittesting" };
-            Word[] expected = { new Word("smartphone"), new Word("notebook") };
+            WordBlock[] expected = { new WordBlock("smartphone"), new WordBlock("notebook") };
             string[] boring = { "unittesting" };
             DoTest(words, expected, boring);
         }
