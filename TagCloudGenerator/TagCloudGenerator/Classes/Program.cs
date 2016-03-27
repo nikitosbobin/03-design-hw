@@ -10,8 +10,8 @@ namespace TagCloudGenerator.Classes
     {
         static void Main(string[] args)
         {
-            
-            /*var options = new Options();
+            /*
+            var options = new Options();
             Parser.Default.ParseArgumentsStrict(args, options);
             var textDecoder = new TxtDecoder(options.FilePath);
             var textHandler = new SimpleTextHandler(options.BoringWords);
@@ -20,14 +20,19 @@ namespace TagCloudGenerator.Classes
             var encoder = new PngEncoder(imageGenerator);
             encoder.SaveImage("out");*/
 
-            var image = new Bitmap(800, 800);
+            var image = new Bitmap(5000, 5000);
             var gr = Graphics.FromImage(image);
+            gr.Transform = new System.Drawing.Drawing2D.Matrix(1, 0, 0, 1, image.Width / 2, image.Height / 2);
             gr.Clear(Color.Aquamarine);
-            var word1 = new WordBlock("test");
-            var word2 = new WordBlock("test");
-            word2.Vertical = true;
-            word1.Draw(gr, Brushes.Black, new Point(400,400));
-            word2.Draw(gr, Brushes.Black, new Point(400, 400));
+            gr.DrawRectangle(new Pen(Color.Black), 0,0,2,2);
+            var word1 = new WordBlock("test1yyyyyy");
+            var word2 = new WordBlock("test2yyyyyy");
+            word2.IsVertical = true;
+            word1.Location = new Point(-200,200);
+            word1.FontSize = word2.FontSize = 150;
+            gr.DrawWordBlock(word1, Brushes.Black);
+            gr.DrawWordBlock(word2, Brushes.Black);
+            gr.ResetTransform();
             image.Save("test.png", ImageFormat.Png);
             image.Dispose();
             gr.Dispose();
@@ -50,8 +55,8 @@ namespace TagCloudGenerator.Classes
             var b = f.IntersectWith(rect1, graphics);
             graphics.DrawPath(new Pen(Color.Black), f);
             //MoveOnLine(graphics, 1, rect1.LeftBottom(), rect1.RigthBottom(), rect1);
-            //MoveOnLine(graphics, 0, rect1.RigthTop(),rect1.RigthBottom(), rect1);
-            //MoveOnLine(graphics, -1, rect1.Location, rect1.RigthTop(), rect1);
+            //MoveOnLine(graphics, 0, rect1.RightTop(),rect1.RigthBottom(), rect1);
+            //MoveOnLine(graphics, -1, rect1.Location, rect1.RightTop(), rect1);
             image.Save("out.png", ImageFormat.Png);
         }
 
@@ -63,7 +68,7 @@ namespace TagCloudGenerator.Classes
 
         public static void MoveOnLine(Graphics gr, int angle, Point start, Point end, Rectangle rect)
         {
-            var dist = start.DistanceTo(end);
+            var dist = start.OffsetTo(end);
             var tmpRect = rect.Rotate(angle);
             tmpRect.Location = start;
             var loc = tmpRect.Location;
@@ -95,12 +100,12 @@ namespace TagCloudGenerator.Classes
             return new Point(rectangle.Left, rectangle.Bottom);
         }
 
-        public static Point RigthTop(this Rectangle rectangle)
+        public static Point RightTop(this Rectangle rectangle)
         {
             return new Point(rectangle.Right, rectangle.Top);
         }
 
-        public static Point DistanceTo(this Point p1, Point p2)
+        public static Point OffsetTo(this Point p1, Point p2)
         {
             var dx = p2.X - p1.X;
             var dy = p2.Y - p1.Y;

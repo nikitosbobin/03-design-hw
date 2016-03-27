@@ -10,24 +10,21 @@ namespace TagCloudGenerator.Classes
             Source = source.ToLower();
             Frequency = frequency;
             Location = Point.Empty;
-            Vertical = false;
+            IsVertical = false;
         }
 
         public string Source { get; }
         public int Frequency { get; set; }
         public Point Location { get; set; }
 
-        public Rectangle WordRectangle
+        public Rectangle GetWordRectangle(Graphics graphics)
         {
-            get
-            {
-                var wordWidth = (int)(Font.Size * 0.7) * Source.Length;
-                var wordHeight = Font.Height;
-                var location = new Point(Location.X, Location.Y);
-                if (Vertical)
-                    location.Y -= wordWidth;
-                return new Rectangle(location, new Size(Vertical ? wordHeight : wordWidth, Vertical ? wordWidth : wordHeight));
-            }
+            var currentWordSize = graphics.MeasureString(Source, Font);
+            var wordWidth = (int) currentWordSize.Width;
+            var wordHeight = (int) currentWordSize.Height;
+            var location = new Point(Location.X, Location.Y);
+            if (IsVertical) location.Y -= wordWidth;
+            return new Rectangle(location, new Size(IsVertical ? wordHeight : wordWidth, IsVertical ? wordWidth : wordHeight));
         }
         private Font font;
         public Font Font
@@ -36,18 +33,22 @@ namespace TagCloudGenerator.Classes
             set { font = value; }
         }
 
-        public bool Vertical { get; set; }
+        public float FontSize { get { return Font.Size; }
+            set { Font = new Font(Font.FontFamily.ToString(), value); }
+        }
 
-        public void Draw(Graphics graphics, Brush brush, Point imageCenter)
+        public bool IsVertical { get; set; }
+
+        public void Draw(Graphics graphics, Brush brush)
         {
-            Font = new Font(Font.FontFamily.ToString(), 30f);
-            graphics.Transform = new System.Drawing.Drawing2D.Matrix(1, 0, 0, 1, imageCenter.X + Location.X, imageCenter.Y - Location.Y);
-            var angle = Vertical ? 270f : 0f;
+            graphics.DrawRectangle(new Pen(Color.Blue), Location.X, Location.Y, 2, 2);
+            var grState = graphics.Save();
+            graphics.TranslateTransform(Location.X, Location.Y);
+            var angle = IsVertical ? 270f : 0f;
             graphics.RotateTransform(angle);
             graphics.DrawString(Source, Font, brush, 0, 0);
-            graphics.ResetTransform();
-            var v = WordRectangle;
-            v.Offset(imageCenter.X, imageCenter.Y);
+            graphics.Restore(grState);
+            var v = GetWordRectangle(graphics);
             graphics.DrawRectangle(new Pen(Color.Crimson), v);
         }
     }

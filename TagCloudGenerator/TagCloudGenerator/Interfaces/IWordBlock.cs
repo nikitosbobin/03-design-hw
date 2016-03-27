@@ -7,9 +7,9 @@ namespace TagCloudGenerator.Interfaces
         string Source { get; }
         int Frequency { get; set; }
         Point Location { get; set; }
-        Rectangle WordRectangle { get; }
+        Rectangle GetWordRectangle(Graphics graphics);
         Font Font { get; set; }
-        void Draw(Graphics graphics, Brush brush, Point imageCenter);
-        bool Vertical { get; set; }
+        void Draw(Graphics graphics, Brush brush);
+        bool IsVertical { get; set; }
     }
 }

@@ -58,6 +58,7 @@
     <Compile Include="Classes\DefaultCommands\SetWordsColors.cs" />
     <Compile Include="Classes\DefaultCommands\SetWordsScale.cs" />
     <Compile Include="Classes\ImageGenerator.cs" />
+    <Compile Include="Classes\MyExtensions.cs" />
     <Compile Include="Classes\Options.cs" />
     <Compile Include="Classes\PngEncoder.cs" />
     <Compile Include="Classes\PolarFunctionCloud.cs" />

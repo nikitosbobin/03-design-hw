@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
+using System.Threading;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
@@ -27,9 +27,8 @@ namespace TagCloudGenerator.Classes
                     wordsBrushes = value;
             }
         }
-
+        
         private string fontFamily;
-
         public string FontFamily
         {
             get
@@ -54,8 +53,16 @@ namespace TagCloudGenerator.Classes
             Image = new Bitmap(Cloud.Size.Width, Cloud.Size.Height);
             var graphics = Graphics.FromImage(Image);
             graphics.Clear(Color.CadetBlue);
-            foreach (var word in words)
-                word.Draw(graphics, Brushes.Black, new Point(Image.Width/2, Image.Height/2));
+            var consoleWidth = Console.WindowWidth;
+            for (var i = 0; i < words.Length; ++i)
+            {
+                Console.Clear();
+                var statusLength = consoleWidth - 11;
+                var status = (int) (statusLength * ((i + 1) / (double) words.Length));
+                words[i].Draw(graphics, Brushes.Black/*, new Point(Image.Width / 2, Image.Height / 2)*/);
+                Console.Write("Status: [" + new string('=', status) + ">" + new string(' ', statusLength - status) + "]");
+                Thread.Sleep(50);
+            }
         }
     }
 }
