@@ -6,7 +6,7 @@ namespace TagCloudGenerator.Classes
 {
     class SimpleTextHandler : ITextHandler
     {
-        public SimpleTextHandler(params string[] boringWords)
+        public SimpleTextHandler(IEnumerable<string> boringWords)
         {
             BoringWords = new HashSet<string>(boringWords ?? new string[0]);
         }
