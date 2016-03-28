@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
+using System.Linq;
 using CommandLine;
 using TagCloudGenerator.Interfaces;
 
@@ -10,8 +15,8 @@ namespace TagCloudGenerator.Classes
     {
         static void Main(string[] args)
         {
-            /*
-            var options = new Options();
+            
+            /*var options = new Options();
             Parser.Default.ParseArgumentsStrict(args, options);
             var textDecoder = new TxtDecoder(options.FilePath);
             var textHandler = new SimpleTextHandler(options.BoringWords);
@@ -20,23 +25,104 @@ namespace TagCloudGenerator.Classes
             var encoder = new PngEncoder(imageGenerator);
             encoder.SaveImage("out");*/
 
-            var image = new Bitmap(5000, 5000);
+            var image = new Bitmap(1200, 1200);
             var gr = Graphics.FromImage(image);
-            gr.Transform = new System.Drawing.Drawing2D.Matrix(1, 0, 0, 1, image.Width / 2, image.Height / 2);
+            gr.Transform = new Matrix(1, 0, 0, 1, image.Width / 2, image.Height / 2);
             gr.Clear(Color.Aquamarine);
-            gr.DrawRectangle(new Pen(Color.Black), 0,0,2,2);
-            var word1 = new WordBlock("test1yyyyyy");
-            var word2 = new WordBlock("test2yyyyyy");
-            word2.IsVertical = true;
-            word1.Location = new Point(-200,200);
-            word1.FontSize = word2.FontSize = 150;
-            gr.DrawWordBlock(word1, Brushes.Black);
-            gr.DrawWordBlock(word2, Brushes.Black);
+            gr.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            var word1 = new WordBlock("test");
+            word1.FontSize = 30;
+            var rect1 = new Rectangle(0,0,100,200);
+            var rect2 = new Rectangle(0,200,50,50);
+            gr.DrawRectangle(new Pen(Color.Black), rect1);
+            gr.DrawRectangle(new Pen(Color.Black), rect2);
+            var timer = Stopwatch.StartNew();
+            Console.WriteLine("начал");
+            ByRect(word1, rect1.GetPoints(), 10, new [] {rect1, rect2 }, gr);
+            ByRect(word1, rect2.GetPoints(), 10, new[] { rect1, rect2 }, gr);
+            Console.WriteLine("закончил");
+            timer.Stop();
+            //gr.DrawWordBlock(word1,Brushes.Black);
             gr.ResetTransform();
-            image.Save("test.png", ImageFormat.Png);
+            image.Save("out.png", ImageFormat.Png);
             image.Dispose();
             gr.Dispose();
         }
+
+        public static void ByRect(IWordBlock word, Point[] points, int count, IEnumerable<Rectangle> frames, Graphics gr)
+        {
+            for (var i = 0; i < points.Length; ++i)
+            {
+                MoveOnLine(word, points[i], points[(i+1) % points.Length], count, frames, gr);
+            }
+        }
+
+        public static bool MoveOnLine(IWordBlock word, Point start, Point end, int count, IEnumerable<Rectangle> frames, Graphics gr)
+        {
+            var dist = start.OffsetTo(end);
+            var startLocation = word.Location;
+            var lineIsVertical = start.X == end.X;
+            Rectangle tmpRect;
+            for (var i = 0; i < count; ++i)
+            {
+                word.Location = new Point(start.X + i * dist.X / count, start.Y + i * dist.Y / count);
+                if (lineIsVertical)
+                {
+                    if (!word.IntersectsWith(frames, gr))
+                        gr.DrawWordBlock(word, Brushes.Black);
+                    word.IsVertical = true;
+                    if (!word.IntersectsWith(frames, gr))
+                        gr.DrawWordBlock(word, Brushes.Black);
+                    word.IsVertical = false;
+                    tmpRect = word.GetWordRectangle(gr);
+                    word.Location = new Point(word.Location.X - tmpRect.Width, word.Location.Y);
+                    if (!word.IntersectsWith(frames, gr))
+                        gr.DrawWordBlock(word, Brushes.Black);
+                    word.Location = new Point(word.Location.X + tmpRect.Width, word.Location.Y);
+                    word.IsVertical = true;
+                    tmpRect = word.GetWordRectangle(gr);
+                    word.Location = new Point(word.Location.X - tmpRect.Width, word.Location.Y);
+                    if (!word.IntersectsWith(frames, gr))
+                        gr.DrawWordBlock(word, Brushes.Black);
+                }
+                else
+                {
+                    if (!word.IntersectsWith(frames, gr))
+                        gr.DrawWordBlock(word, Brushes.Black);
+                    word.SaveLocation();
+                    tmpRect = word.GetWordRectangle(gr);
+                    word.Location = new Point(word.Location.X, word.Location.Y - tmpRect.Height);
+                    if (!word.IntersectsWith(frames, gr))
+                        gr.DrawWordBlock(word, Brushes.Black);
+                    word.RestoreLocation();
+                    word.IsVertical = true;
+                    if (!word.IntersectsWith(frames, gr))
+                        gr.DrawWordBlock(word, Brushes.Black);
+                    tmpRect = word.GetWordRectangle(gr);
+                    word.Location = new Point(word.Location.X, word.Location.Y + tmpRect.Height);
+                    if (!word.IntersectsWith(frames, gr))
+                        gr.DrawWordBlock(word, Brushes.Black);
+                }
+                word.IsVertical = false;
+            }
+            word.Location = startLocation;
+            return false;
+        }
+
+        /*public GraphicsPath AddRect(GraphicsPath path, Rectangle rect)
+        {
+            var points = path.PathPoints;
+            var result = new List<PointF>();
+            var rectPoints = rect.GetPoints().ToList();
+            foreach (var point in points)
+            {
+                result.Add(point);
+                if (rect.GetEqualPoint(point.ToPointInt()) != null)
+                {
+
+                }
+            }
+        }*/
     }
 
     /*

@@ -1,4 +1,8 @@
-﻿using System.Drawing;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Text;
+using System.Linq;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
@@ -11,6 +15,7 @@ namespace TagCloudGenerator.Classes
             Frequency = frequency;
             Location = Point.Empty;
             IsVertical = false;
+            savedLocations = new Stack<Point>();
         }
 
         public string Source { get; }
@@ -19,13 +24,20 @@ namespace TagCloudGenerator.Classes
 
         public Rectangle GetWordRectangle(Graphics graphics)
         {
-            var currentWordSize = graphics.MeasureString(Source, Font);
-            var wordWidth = (int) currentWordSize.Width;
-            var wordHeight = (int) currentWordSize.Height;
+            var currentWordSize = GetWordSize(graphics);
+            var wordWidth = currentWordSize.Width;
+            var wordHeight = currentWordSize.Height;
             var location = new Point(Location.X, Location.Y);
             if (IsVertical) location.Y -= wordWidth;
             return new Rectangle(location, new Size(IsVertical ? wordHeight : wordWidth, IsVertical ? wordWidth : wordHeight));
         }
+
+        public Size GetWordSize(Graphics graphics)
+        {
+            var tmpSize = graphics.MeasureString(Source, Font);
+            return new Size((int) tmpSize.Width, (int) tmpSize.Height);
+        }
+
         private Font font;
         public Font Font
         {
@@ -38,10 +50,27 @@ namespace TagCloudGenerator.Classes
         }
 
         public bool IsVertical { get; set; }
+        private Stack<Point> savedLocations;
+        public void SaveLocation()
+        {
+            savedLocations.Push(Location);
+        }
+
+        public bool RestoreLocation()
+        {
+            if (savedLocations.Count == 0) return false;
+            Location = savedLocations.Pop();
+            return true;
+        }
+
+        public bool IntersectsWith(IEnumerable<Rectangle> frames, Graphics graphics)
+        {
+            return frames?.Any(r => r.IntersectsWith(GetWordRectangle(graphics))) ?? false;
+        }
 
         public void Draw(Graphics graphics, Brush brush)
         {
-            graphics.DrawRectangle(new Pen(Color.Blue), Location.X, Location.Y, 2, 2);
+            //graphics.DrawRectangle(new Pen(Color.Blue), Location.X, Location.Y, 2, 2);
             var grState = graphics.Save();
             graphics.TranslateTransform(Location.X, Location.Y);
             var angle = IsVertical ? 270f : 0f;

@@ -52,6 +52,7 @@ namespace TagCloudGenerator.Classes
             words = Cloud.Words;
             Image = new Bitmap(Cloud.Size.Width, Cloud.Size.Height);
             var graphics = Graphics.FromImage(Image);
+            graphics.Transform = new System.Drawing.Drawing2D.Matrix(1, 0, 0, 1, Image.Width / 2, Image.Height / 2);
             graphics.Clear(Color.CadetBlue);
             var consoleWidth = Console.WindowWidth;
             for (var i = 0; i < words.Length; ++i)
@@ -61,8 +62,9 @@ namespace TagCloudGenerator.Classes
                 var status = (int) (statusLength * ((i + 1) / (double) words.Length));
                 words[i].Draw(graphics, Brushes.Black/*, new Point(Image.Width / 2, Image.Height / 2)*/);
                 Console.Write("Status: [" + new string('=', status) + ">" + new string(' ', statusLength - status) + "]");
-                Thread.Sleep(50);
+                Thread.Sleep(10);
             }
+            graphics.ResetTransform();
         }
     }
 }
