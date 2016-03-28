@@ -6,13 +6,12 @@ using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
 {
-    abstract partial class PolarFunctionCloud : ICloudGenerator
+    abstract partial class PolarFunctionCloud
     {
         public abstract Point GetBlockCoords();
 
         protected PolarFunctionCloud(ITextDecoder decoder, ITextHandler textHandler)
         {
-            Generator = new ImageGenerator(this);
             this.decoder = decoder;
             TextHandler = textHandler;
             frames = new HashSet<Rectangle>();

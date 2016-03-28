@@ -56,6 +56,7 @@
     <Compile Include="Classes\Options.cs" />
     <Compile Include="Classes\PngEncoder.cs" />
     <Compile Include="Classes\PolarFunctionCloud.cs" />
+    <Compile Include="Classes\RelativeChoiceCloud.cs" />
     <Compile Include="Classes\SimpleTextHandler.cs" />
     <Compile Include="Classes\TxtDecoder.cs" />
     <Compile Include="Classes\WordBlock.cs" />

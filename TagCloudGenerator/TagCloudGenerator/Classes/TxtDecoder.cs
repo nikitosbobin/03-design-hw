@@ -18,7 +18,7 @@ namespace TagCloudGenerator.Classes
             try
             {
                 var tmpText = File.ReadAllLines(Path);
-                return tmpText.Select(line => line.ToLower()).ToArray();
+                return tmpText.Select(line => line.ToUpper()).ToArray();
             }
             catch
             {

@@ -41,7 +41,7 @@ namespace TagCloudGenerator.Classes
         private Font font;
         public Font Font
         {
-            get { return font ?? (font = new Font("Times New Roman", 12f)); }
+            get { return font ?? (font = new Font("Times New Roman", 40f)); }
             set { font = value; }
         }
 
@@ -77,8 +77,8 @@ namespace TagCloudGenerator.Classes
             graphics.RotateTransform(angle);
             graphics.DrawString(Source, Font, brush, 0, 0);
             graphics.Restore(grState);
-            var v = GetWordRectangle(graphics);
-            graphics.DrawRectangle(new Pen(Color.Crimson), v);
+            //var v = GetWordRectangle(graphics);
+            //graphics.DrawRectangle(new Pen(Color.Crimson), v);
         }
     }
 }
