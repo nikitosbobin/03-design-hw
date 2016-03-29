@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using CommandLine;
@@ -25,5 +26,31 @@ namespace TagCloudGenerator.Classes
         public string BoringFilePath { get; set; }
 
         public IEnumerable<string> BoringWords => BoringFilePath == null ? new string[0] : File.ReadLines(BoringFilePath);
+
+        [Option('c', "colors", HelpText = "Путь к файлу с цветами для раскраски слов")]
+        public string ColorsPath { get; set; }
+
+        public List<SolidBrush> WordColors => GetColors(ColorsPath);
+
+        private static List<SolidBrush> GetColors(string path)
+        {
+            var wordsBrushes = new List<SolidBrush>();
+            var converter = new ColorConverter();
+            var colors = File.ReadAllLines(path);
+            foreach (var color in colors)
+            {
+                try
+                {
+                    var tempColor = (Color) converter.ConvertFromString(color);
+                    wordsBrushes.Add(new SolidBrush(tempColor));
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine($"Can not convert {color}");
+                }
+                
+            }
+            return wordsBrushes;
+        }
     }
 }

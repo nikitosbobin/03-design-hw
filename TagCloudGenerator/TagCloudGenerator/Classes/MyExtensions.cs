@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using TagCloudGenerator.Interfaces;
 
 namespace TagCloudGenerator.Classes
@@ -77,6 +79,12 @@ namespace TagCloudGenerator.Classes
             return new Point(dx, dy);
         }
 
+        public static T GetRandomElement<T>(this IEnumerable<T> source)
+        {
+            var rnd = new Random(DateTime.Now.Millisecond);
+            return source.ElementAt(rnd.Next(0, source.Count()));
+        }
+
         public static T[] OffsetArray<T>(this T[] source, int offset)
         {
             var result = new List<T>();
@@ -86,6 +94,21 @@ namespace TagCloudGenerator.Classes
                 offset++;
             }
             return result.ToArray();
+        }
+
+        public static IList<T> Shuffle<T>(this IList<T> source)
+        {
+            var rnd = new Random(DateTime.Now.Millisecond);
+            var n = source.Count;
+            while (n > 1)
+            {
+                n--;
+                var k = rnd.Next(n + 1);
+                var value = source[k];
+                source[k] = source[n];
+                source[n] = value;
+            }
+            return source;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace TagCloudGenerator.Classes
 
         private bool IsItRightWord(string word)
         {
-            return word.Length > 5 && !BoringWords.Contains(word);
+            return word.Length >= 5 && !BoringWords.Contains(word);
         }
 
         private void CreateInnerWords()

@@ -42,12 +42,13 @@ namespace TagCloudGenerator.Classes
             set { fontFamily = value; }
         }
 
-        public ImageGenerator(int width, int height)
+        public ImageGenerator(int width, int height, List<SolidBrush> colors = null)
         {
+            WordsBrushes = colors;
             Image = new Bitmap(width, height);
             Graphics = Graphics.FromImage(Image);
             Graphics.Transform = new Matrix(1, 0, 0, 1, width / 2, height / 2);
-            Graphics.Clear(Color.Aquamarine);
+            Graphics.Clear(Color.Black);
             Graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             rnd = new Random(DateTime.Now.Millisecond);
         }
@@ -56,12 +57,13 @@ namespace TagCloudGenerator.Classes
         {
             cloud.CreateCloud();
             words = cloud.Words;
+            var colors = WordsBrushes;
             Console.WriteLine();
             var logger = new ConsoleLogger(words.Length);
             logger.LogTitle("Cloud drawing");
             foreach (var word in words)
             {
-                word.Draw(Graphics, Brushes.Black);
+                word.Draw(Graphics, colors.GetRandomElement());
                 logger.LogStatus();
             }
             Graphics.ResetTransform();

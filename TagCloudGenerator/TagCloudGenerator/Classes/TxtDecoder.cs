@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using TagCloudGenerator.Interfaces;
 
@@ -18,7 +19,9 @@ namespace TagCloudGenerator.Classes
             try
             {
                 var tmpText = File.ReadAllLines(Path);
-                return tmpText.Select(line => line.ToUpper()).ToArray();
+                var tmpTextSplitted = tmpText.Select(s => s.Split(new[] {'[',']','$', '>', '{', '}', '=', ' ', '.', ',',
+                    ':', '-', '!', '?', '(',')', '\'', '"', '`', ';', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' },StringSplitOptions.RemoveEmptyEntries));
+                return tmpTextSplitted.SelectMany(c => c.Select(t => t.ToUpper())).ToArray();
             }
             catch
             {

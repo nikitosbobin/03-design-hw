@@ -1,0 +1,7 @@
+red
+green
+yellow
+brown
+blue
+crimson
+gray

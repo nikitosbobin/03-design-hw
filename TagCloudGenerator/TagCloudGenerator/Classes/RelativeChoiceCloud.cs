@@ -13,12 +13,12 @@ namespace TagCloudGenerator.Classes
             ImageGenerator = generator;
             TextHandler = textHandler;
             this.decoder = decoder;
-            frames = new HashSet<Rectangle>();
-            WordScale = 0.03f;
+            frames = new List<Rectangle>();
+            WordScale = 0.1f;
             rnd = new Random(DateTime.Now.Millisecond);
         }
 
-        private readonly HashSet<Rectangle> frames;
+        private readonly List<Rectangle> frames;
         private readonly ITextDecoder decoder;
         private Random rnd;
 
@@ -26,7 +26,7 @@ namespace TagCloudGenerator.Classes
         {
             
             Console.WriteLine("Handling words\n");
-            Words = TextHandler.GetWords(decoder).OrderByDescending(u => u.Frequency).Take(150).ToArray();
+            Words = TextHandler.GetWords(decoder).OrderByDescending(u => u.Frequency).ToArray();
             var currentFontSize = ImageGenerator.Image.Height * WordScale;
             Words[0].FontSize = currentFontSize;
             var currentFreq = Words[0].Frequency;
@@ -40,18 +40,15 @@ namespace TagCloudGenerator.Classes
                     currentFreq = word.Frequency;
                 }
                 word.FontSize = currentFontSize;
-                foreach (var frame in frames)
+                if (frames.Shuffle().Any(frame => BypassRect(word, frame.GetPoints().OffsetArray(rnd.Next(0, 4)), 4, frames, Graphics)))
                 {
-                    if (BypassRect(word, frame.GetPoints().OffsetArray(rnd.Next(0, 4)), 4, frames, Graphics))
-                    {
-                        frames.Add(word.GetWordRectangle(Graphics));
-                        break;
-                    }
+                    frames.Add(word.GetWordRectangle(Graphics));
                 }
                 if (frames.Count == 0)
                 {
                     var wordSize = word.GetWordSize(Graphics);
                     word.Location = new Point(-wordSize.Width/2,-wordSize.Height/2);
+                    word.IsVertical = false;
                     frames.Add(word.GetWordRectangle(Graphics));
                 }
                 logger.LogStatus();
@@ -76,6 +73,7 @@ namespace TagCloudGenerator.Classes
             var dist = start.OffsetTo(end);
             var startLocation = word.Location;
             var lineIsVertical = start.X == end.X;
+            var startRotation = word.IsVertical;
             for (var i = 0; i < count; ++i)
             {
                 word.Location = new Point(start.X + i * dist.X / count, start.Y + i * dist.Y / count);
@@ -84,18 +82,17 @@ namespace TagCloudGenerator.Classes
                 {
                     if (!word.IntersectsWith(frames, gr) && word.InsideImage(gr))
                         return true;
-                    word.IsVertical = true;
+                    word.SaveLocation();
+                    tmpRect = word.GetWordRectangle(gr);
+                    word.Location = new Point(word.Location.X + tmpRect.Width * (word.IsVertical ? 1 : -1), word.Location.Y);
                     if (!word.IntersectsWith(frames, gr) && word.InsideImage(gr))
                         return true;
-                    word.IsVertical = false;
-                    tmpRect = word.GetWordRectangle(gr);
-                    word.Location = new Point(word.Location.X - tmpRect.Width, word.Location.Y);
+                    word.RestoreLocation();
+                    word.IsVertical = !word.IsVertical;
                     if (!word.IntersectsWith(frames, gr) && word.InsideImage(gr))
                         return true;
-                    word.Location = new Point(word.Location.X + tmpRect.Width, word.Location.Y);
-                    word.IsVertical = true;
                     tmpRect = word.GetWordRectangle(gr);
-                    word.Location = new Point(word.Location.X - tmpRect.Width, word.Location.Y);
+                    word.Location = new Point(word.Location.X + tmpRect.Width * (word.IsVertical ? 1 : -1), word.Location.Y);
                     if (!word.IntersectsWith(frames, gr) && word.InsideImage(gr))
                         return true;
                 }
@@ -105,19 +102,19 @@ namespace TagCloudGenerator.Classes
                         return true;
                     word.SaveLocation();
                     tmpRect = word.GetWordRectangle(gr);
-                    word.Location = new Point(word.Location.X, word.Location.Y - tmpRect.Height);
+                    word.Location = new Point(word.Location.X, word.Location.Y + tmpRect.Height * (word.IsVertical ? 1 : -1));
                     if (!word.IntersectsWith(frames, gr) && word.InsideImage(gr))
                         return true;
                     word.RestoreLocation();
-                    word.IsVertical = true;
+                    word.IsVertical = !word.IsVertical;
                     if (!word.IntersectsWith(frames, gr) && word.InsideImage(gr))
                         return true;
                     tmpRect = word.GetWordRectangle(gr);
-                    word.Location = new Point(word.Location.X, word.Location.Y + tmpRect.Height);
+                    word.Location = new Point(word.Location.X, word.Location.Y + tmpRect.Height * (word.IsVertical ? 1 : -1));
                     if (!word.IntersectsWith(frames, gr) && word.InsideImage(gr))
                         return true;
                 }
-                word.IsVertical = false;
+                word.IsVertical = startRotation;
             }
             word.Location = startLocation;
             return false;

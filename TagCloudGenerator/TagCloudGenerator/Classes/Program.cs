@@ -22,13 +22,14 @@ namespace TagCloudGenerator.Classes
             Console.WriteLine("Creating SimpleTextHandler\n");
             var textHandler = new SimpleTextHandler(options.BoringWords);
             Console.WriteLine("Creating ImageGenerator\n");
-            ICloudImageGenerator imageGenerator = new ImageGenerator(options.ImageWidth, options.ImageHeight);
+            ICloudImageGenerator imageGenerator = new ImageGenerator(options.ImageWidth, options.ImageHeight, options.WordColors);
             Console.WriteLine("Creating CloudGenerator\n");
             ICloudGenerator cloudGenerator = new RelativeChoiceCloud(textDecoder, textHandler, imageGenerator);
             Console.WriteLine("Creating PngEncoder\n");
             var encoder = new PngEncoder(imageGenerator, cloudGenerator);
             Console.WriteLine("Saving image\n");
-            encoder.SaveImage("out");
+            var date = DateTime.Now;
+            encoder.SaveImage($"cloud[{date.Day}_{date.Month}_{date.Year}][{date.Hour}_{date.Minute}_{date.Second}]");
         }
     }
 }

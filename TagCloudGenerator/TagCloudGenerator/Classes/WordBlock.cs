@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloudGenerator.Interfaces;
@@ -9,10 +10,12 @@ namespace TagCloudGenerator.Classes
     {
         public WordBlock(string source, int frequency = 1)
         {
-            Source = source.ToLower();
+            Source = source;
             Frequency = frequency;
             Location = Point.Empty;
-            IsVertical = false;
+            var rnd = new Random(DateTime.Now.Millisecond);
+            IsVertical = rnd.Next(0, 2) == 1;
+            //IsVertical = false;
             savedLocations = new Stack<Point>();
         }
 
