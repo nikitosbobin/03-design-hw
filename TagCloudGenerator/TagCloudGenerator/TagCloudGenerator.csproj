@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ConsoleLogger.cs" />
     <Compile Include="Classes\ImageGenerator.cs" />
     <Compile Include="Classes\MyExtensions.cs" />
     <Compile Include="Classes\Options.cs" />

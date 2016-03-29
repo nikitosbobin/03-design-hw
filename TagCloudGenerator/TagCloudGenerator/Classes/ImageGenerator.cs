@@ -56,15 +56,13 @@ namespace TagCloudGenerator.Classes
         {
             cloud.CreateCloud();
             words = cloud.Words;
-            var consoleWidth = Console.WindowWidth;
-            for (var i = 0; i < words.Length; ++i)
+            Console.WriteLine();
+            var logger = new ConsoleLogger(words.Length);
+            logger.LogTitle("Cloud drawing");
+            foreach (var word in words)
             {
-                Console.Clear();
-                var statusLength = consoleWidth - 11;
-                var status = (int) (statusLength * ((i + 1) / (double) words.Length));
-                words[i].Draw(Graphics, Brushes.Black/*, new Point(Image.Width / 2, Image.Height / 2)*/);
-                Console.Write("Status: [" + new string('=', status) + ">" + new string(' ', statusLength - status) + "]");
-                //Thread.Sleep(10);
+                word.Draw(Graphics, Brushes.Black);
+                logger.LogStatus();
             }
             Graphics.ResetTransform();
         }

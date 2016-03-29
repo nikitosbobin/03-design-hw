@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloudGenerator.Interfaces;
@@ -13,6 +14,7 @@ namespace TagCloudGenerator.Classes
             TextHandler = textHandler;
             this.decoder = decoder;
             frames = new HashSet<Rectangle>();
+            WordScale = 0.1f;
         }
 
         private readonly HashSet<Rectangle> frames;
@@ -20,9 +22,20 @@ namespace TagCloudGenerator.Classes
 
         public void CreateCloud()
         {
-            Words = TextHandler.GetWords(decoder).OrderByDescending(u => u.Frequency).ToArray();
+            Console.WriteLine("Handling words\n");
+            Words = TextHandler.GetWords(decoder).OrderByDescending(u => u.Frequency).Take(100).ToArray();
+            var currentFontSize = ImageGenerator.Image.Height * WordScale;
+            Words[0].FontSize = currentFontSize;
+            var currentFreq = Words[0].Frequency;
+            var logger = new ConsoleLogger(Words.Length);
+            logger.LogTitle("Start cloud creating");
             foreach (var word in Words)
             {
+                if (currentFreq > word.Frequency)
+                {
+                    word.FontSize *= ((float)word.Frequency / currentFreq);
+                    currentFreq = word.Frequency;
+                }
                 foreach (var frame in frames)
                 {
                     if (BypassRect(word, frame.GetPoints(), 4, frames, Graphics))
@@ -33,9 +46,10 @@ namespace TagCloudGenerator.Classes
                 }
                 if (frames.Count == 0)
                     frames.Add(word.GetWordRectangle(Graphics));
+                logger.LogStatus();
             }
         }
-        
+
         public ITextHandler TextHandler { get; set; }
         public IWordBlock[] Words { get; set; }
         public ICloudImageGenerator ImageGenerator { get; }

@@ -11,6 +11,7 @@ namespace TagCloudGenerator.Interfaces
         Rectangle GetWordRectangle(Graphics graphics);
         Size GetWordSize(Graphics graphics);
         Font Font { get; set; }
+        float FontSize { get; set; }
         void Draw(Graphics graphics, Brush brush);
         bool IsVertical { get; set; }
         void SaveLocation();
