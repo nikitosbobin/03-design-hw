@@ -17,5 +17,6 @@ namespace TagCloudGenerator.Interfaces
         void SaveLocation();
         bool RestoreLocation();
         bool IntersectsWith(IEnumerable<Rectangle> frames, Graphics graphics);
+        bool InsideImage(Graphics graphics);
     }
 }

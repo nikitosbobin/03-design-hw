@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using TagCloudGenerator.Interfaces;
@@ -74,6 +75,17 @@ namespace TagCloudGenerator.Classes
             var dx = p2.X - p1.X;
             var dy = p2.Y - p1.Y;
             return new Point(dx, dy);
+        }
+
+        public static T[] OffsetArray<T>(this T[] source, int offset)
+        {
+            var result = new List<T>();
+            foreach (var element in source)
+            {
+                result.Add(source[offset % source.Length]);
+                offset++;
+            }
+            return result.ToArray();
         }
     }
 }

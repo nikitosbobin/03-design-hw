@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Text;
 using System.Linq;
 using TagCloudGenerator.Interfaces;
 
@@ -68,6 +66,16 @@ namespace TagCloudGenerator.Classes
             return frames?.Any(r => r.IntersectsWith(GetWordRectangle(graphics))) ?? false;
         }
 
+        public bool InsideImage(Graphics graphics)
+        {
+            return GetWordRectangle(graphics).GetPoints().All(graphics.IsVisible);
+        }
+
+        public override string ToString()
+        {
+            return $"{Source}--{Frequency}";
+        }
+
         public void Draw(Graphics graphics, Brush brush)
         {
             //graphics.DrawRectangle(new Pen(Color.Blue), Location.X, Location.Y, 2, 2);
@@ -77,8 +85,8 @@ namespace TagCloudGenerator.Classes
             graphics.RotateTransform(angle);
             graphics.DrawString(Source, Font, brush, 0, 0);
             graphics.Restore(grState);
-            var v = GetWordRectangle(graphics);
-            graphics.DrawRectangle(new Pen(Color.Crimson), v);
+            //var v = GetWordRectangle(graphics);
+            //graphics.DrawRectangle(new Pen(Color.Crimson), v);
         }
     }
 }
